@@ -1,0 +1,275 @@
+@charset "ISO-8859-1";
+
+#regulationContainer {
+	display: flex;
+}
+
+#mainFinishedTableRegulation {
+	flex: 2;
+	margin: 10px;
+}
+
+/*.mainFinishedGames{ 
+	flex: 2;
+	margin: 10px;
+}*/
+
+#regulationStats {
+	flex: 1;
+	margin: 10px;
+}
+
+#regulationStats table{
+	border-collapse: collapse;
+	width: 100%;
+	margin-top: 10px;
+	background-color: var(--contentMainTableBackground);
+	/*font-size: 11px;*/
+}
+
+#regulationStats th {
+	background-color: var(--htmlBackground);
+	/*font-size: 13px;*/
+	margin-bottom: 5px;
+}
+
+#regulationStats .conferenceName{
+	padding-left: 10px;
+	text-align: left;
+}
+
+#regulationStats tr.header:not(:first-child) th {
+	padding-top: 10px;
+}
+
+#regulationStats tr {
+	border-bottom: 1px solid var(--contentMainTableRowLine);
+}
+
+#regulationStats tr:not(.header):hover {
+	background-color: var(--contentMainTableRowHover);
+}
+
+#regulationStats td {
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+
+#regulationStats .teamName:hover{
+	cursor: pointer;
+	text-shadow: 2px 2px 1px black;
+}
+
+.numeric {
+	text-align: center;
+}
+
+#regulationStats table tr {
+	color: var(--contentMainTableRowLine);
+}
+
+#regulationStats table tr:first-child {
+	width: 400px;
+}
+
+#regulationStats table .teamPic {
+	width: 15px;
+	height: 15px;
+}
+
+
+.mainFinishedTable {
+	background-color: var(--contentMainTableBackground);
+	color: var(--contentMainTableTextColor);
+	width: 100%;
+	table-layout: fixed;
+	border-collapse:collapse;
+	padding-bottom: 5px;
+	border-spacing: 0px;
+	margin-right: 20px;
+	margin-top: 10px;
+}
+
+.mainFinishedTable tr{
+	/*border-bottom: 1px solid var(--contentMainTableRowLine);*/
+	/*display: block;*/
+	/*height: 100%;*/
+	color: var(--contentMainTableTextColor);
+	margin-left: 0px;
+	margin-right: 0px;
+	transition: 0.5s;
+}
+
+.mainFinishedTable .clickableTr {
+	border-collapse: collapse;
+	width: 100%;
+	border-bottom: 1px solid var(--contentMainTableRowLine);
+	padding-bottom: 5px;
+	margin-top: 5px;
+	cursor: pointer;
+}
+
+.mainFinishedTable .clickableTr:hover {
+	background-color: var(--contentMainTableRowHover);
+}
+
+.resultsHeader{
+	/*table-layout: fixed;*/
+	width: 100%;
+	border-spacing: 1px;
+}
+
+.mainFinishedTable .resultsHeaderDate {
+	padding-right: 10px;
+	width: 18%;
+	text-align: center;
+}
+
+.mainFinishedTable .resultsPics {
+	width: 20px;
+}
+
+.mainFinishedTable .resultsTeamName {
+	width: 180px;
+}
+
+.mainFinishedTable .resultsScore {
+	width: 25px;
+	font-weight: bold;
+	text-align: right;
+}
+
+.mainFinishedTable .resultsDetail {
+	width: 25px;
+	text-align: left;
+	font-weight: bold;
+	font-size: 12px;
+}
+
+.mainFinishedTable .resultsPeriodScore {
+	width: 25px;
+}
+
+.mainFinishedTable .gamePageButton {
+  background-color: var(--contentMainTableRowHover);
+  border-color: var(--contentMainTableBackground);
+  color: var(--contentMainTableTextColor);
+  display: block;
+  margin-left: auto;
+  margin-right: 10px;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.mainFinishedTable .gamePageButton:hover {
+  background-color: var(--contentMainTableBackground);
+  font-weight: bold;
+}
+
+.mainFinishedTable .teamPic{
+	width: 15px;
+	height: 15px;
+}
+
+.mainFinishedTable .matchData{
+	background-color: var(--contentMainTableMatchData);
+	border-style: inset;
+	border-color: var(--contentMainTableRowHover);
+	width: 2000px;
+}
+
+.mainFinishedTable .periodHeader {
+	background-color: var(--htmlBackground); 
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+}
+.mainFinishedTable .periodHeader div {
+	display: block;
+	width: auto;
+	margin-left: 25px;
+	margin-right: 25px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+.mainFinishedTable .eventLineHome {
+	display: block;
+	float: left;
+	width: 100%;
+	padding-top: 5px;
+	padding-left: 5px;
+	padding-bottom: 5px;
+	padding-right: 5px;
+}
+
+.mainFinishedTable .eventLineAway {
+	display: block;
+	width: 100%;
+	height: 100%;
+	text-align: right;
+	float: right;
+	margin-left: auto;
+	margin-right: 0px;
+	margin-bottom: 5px;
+	padding-top: 5px;
+	padding-left: 5px;
+}
+
+.eventLineAway .periodEventTime, .eventLineAway .periodEventIcon, .eventLineAway .periodEventMainPlayer, .eventLineAway .periodEventStrength, .eventLineAway .periodEventAssist {
+	float: right;
+	padding-right: 5px;
+}
+.eventLineAway .periodEventAssist {
+	width: 100%;
+	margin-left: auto;
+	margin-right: 0px;
+}
+
+.mainFinishedTable .periodEventIcon {
+	width: 20px;
+	height: 20px;
+}
+
+.mainFinishedTable .periodEventTime, .periodEventIcon, .periodEventMainPlayer, .periodEventStrength, .periodEventPenaltyType {
+	display: inline-block;
+	/*height: 100%;*/
+	vertical-align: middle;
+}
+
+.mainFinishedTable .eventLineHome img, .mainFinishedTable .eventLineAway img {
+	/*width: auto;
+	height: auto;*/
+	padding-left: 3px;
+	padding-right: 3px;
+}
+
+img {
+	width: 100%;
+	height: 100%;
+}
+
+.mainFinishedTable .periodEventAssist {
+	display: block;
+	font-style: oblique;
+	font-size: 13px;
+}
+
+.mainFinishedTable .periodEventPenaltyType, .periodEventStrength, .periodEventPenaltyType {
+	font-style: oblique;
+	font-size: 14px;
+	padding-right: 5px;
+}
+
+.mainFinishedTable .periodEventMainPlayer {
+	font-weight: bold;
+}
+
+.matchData .gameDetailPlayerName {
+	font-size: 14px;
+	cursor: pointer;
+}
+.matchData .gameDetailPlayerName:hover {
+	color: var(--contentMainTableRowHover);
+}
+
