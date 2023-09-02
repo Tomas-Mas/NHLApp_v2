@@ -7,18 +7,18 @@ Dynamic web project showing data from Oracle db, that are loaded from api [NHLDa
 - Oracle 19 <br>
 - Maven <br>
 - Spring Web MVC <br>
-- Hibernate (HQL, JPA criteria API) <br>
+- JPA/Hibernate (HQL, JPA criteria API) <br>
 - HTML, JSTL, CSS, Javascript <br>
 
 ## General description
 User request are served by Spring controllers. <br>
 Data are retrieved from db using HQL for simple queries, JPA criteria API for more complex queries. <br>
-Html page is then filled by retrieved data and styled by CSS and Javascript.
+Html page is then filled by retrieved data and styled with CSS and Javascript.
 
 ## Pages
 
 ### Main page
-TODO
+![mainpage screenshot](readme-imgs/main-page-screen.png)
 -half done
 ### Stats page
 TODO
