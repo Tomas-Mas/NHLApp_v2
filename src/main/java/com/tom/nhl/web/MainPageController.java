@@ -38,7 +38,7 @@ public class MainPageController {
 		model.addAttribute("seasons", gameService.getSeasons());
 		model.addAttribute("selectedSeason", season);
 		
-		model.addAttribute("games", gameService.getGamesBySeasonWithOrderedKeyEvents(season));
+		model.addAttribute("games", gameService.getGamesBySeasonWithKeyEvents(season));
 		
 		return "/mainpage.jsp";
 	}

@@ -1,3 +1,21 @@
+#title {
+	height:auto;
+	overflow: hidden;
+	padding-bottom: 5px;
+}
+
+#title #logo {
+	padding-left: 15px;
+	padding-right: 15px;
+	margin-left: 500px;
+	width: 60px;
+	float: left;
+}
+
+#title #headline {
+	float: left;
+}
+
 .menu {
   overflow: hidden;
   border: 1px solid var(--menuBorderBackground);

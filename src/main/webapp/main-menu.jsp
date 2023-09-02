@@ -4,7 +4,9 @@
 <!DOCTYPE html>
 
 <div id='title'>
-	<p class='headline'>Welcome to the jungle</p>
+	<!--<div id='logo'><img src="/NHL/src/img/nhl-logo.png"></div>-->
+	<div id='logo'><img src="/NHL/src/img/nhl-logo.png"></div>
+	<div id='headline'><p>NHL</p></div>
 </div>
 	
 <div id='mainMenu' class='menu'>

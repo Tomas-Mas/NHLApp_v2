@@ -3,6 +3,7 @@ package com.tom.nhl.entity;
 import java.io.Serializable;
 
 import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
@@ -13,7 +14,7 @@ public class EventPlayerPK implements Serializable {
 	private GameEvent event;
 	private Roster roster;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "event_id")
 	public GameEvent getEvent() {
 		return event;
@@ -22,7 +23,7 @@ public class EventPlayerPK implements Serializable {
 		this.event = event;
 	}
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "roster_id")
 	public Roster getRoster() {
 		return roster;

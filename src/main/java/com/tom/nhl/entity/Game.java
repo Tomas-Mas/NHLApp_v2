@@ -1,6 +1,7 @@
 package com.tom.nhl.entity;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -32,7 +33,12 @@ public class Game {
 	private Venue venue;
 	private GameStatus gameStatus;
 	private List<GameEvent> events;
+	
 	private String resultDetail;
+	private String formattedGameDate;
+	private List<Integer> homePeriodScore;
+	private List<Integer> awayPeriodScore;
+	private List<List<GameEvent>> eventsPerPeriod;
 	
 	@Id
 	@SequenceGenerator(name = "gameIdGenerator", sequenceName = "SEQ_GAMES_ID", allocationSize = 1)
@@ -85,7 +91,7 @@ public class Game {
 		this.awayScore = awayScore;
 	}
 	
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "awayTeamId")
 	public Team getAwayTeam() {
 		return awayTeam;
@@ -138,14 +144,57 @@ public class Game {
 	}
 	
 	@Transient
+	public String getFormattedGameDate() {
+		formattedGameDate = new SimpleDateFormat("dd.MM.yyyy HH:mm").format(getGameDate());
+		return formattedGameDate;
+	}
+	public void setFormattedGameDate(String formattedGameDate) {
+		this.formattedGameDate = formattedGameDate;
+	}
+	
+	@Transient
 	public String getResultDetail() {
 		if(events == null || events.size() == 0)
 			return "";
-		//int maxPeriod = 
+		
+		String lastPeriodType = events.get(events.size() -1).getPeriodType();
+		if(lastPeriodType.equals("REGULAR"))
+			setResultDetail("");
+		else if(lastPeriodType.equals("OVERTIME"))
+			setResultDetail("OT");
+		else if(lastPeriodType.equals("SHOOTOUT"))
+			setResultDetail("SO");
+		else
+			setResultDetail("N/A");
+		
 		return resultDetail;
 	}
 	public void setResultDetail(String resultDetail) {
 		this.resultDetail = resultDetail;
+	}
+	
+	@Transient
+	public List<Integer> getHomePeriodScore() {
+		return homePeriodScore;
+	}
+	public void setHomePeriodScore(List<Integer> homePeriodScore) {
+		this.homePeriodScore = homePeriodScore;
+	}
+	
+	@Transient
+	public List<Integer> getAwayPeriodScore() {
+		return awayPeriodScore;
+	}
+	public void setAwayPeriodScore(List<Integer> awayPeriodScore) {
+		this.awayPeriodScore = awayPeriodScore;
+	}
+	
+	@Transient
+	public List<List<GameEvent>> getEventsPerPeriod() {
+		return this.eventsPerPeriod;
+	}
+	public void setEventsPerPeriod(List<List<GameEvent>> eventsPerPeriod) {
+		this.eventsPerPeriod = eventsPerPeriod;
 	}
 	
 	

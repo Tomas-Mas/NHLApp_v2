@@ -14,6 +14,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import com.tom.nhl.enums.TeamType;
 
 @Entity
 @Table(name = "gameEvents")
@@ -29,6 +32,9 @@ public class GameEvent {
 	private int coordX;
 	private int coordY;
 	private List<EventPlayer> players;
+	
+	private TeamType actedBy;
+	private EventPlayer mainActor;
 	
 	@Id
 	@SequenceGenerator(name = "gameEventIdGenerator", sequenceName = "SEQ_GAMEEVENTS_ID", allocationSize = 1)
@@ -113,5 +119,21 @@ public class GameEvent {
 	}
 	public void setPlayers(List<EventPlayer> players) {
 		this.players = players;
+	}
+	
+	@Transient
+	public TeamType getActedBy() {
+		return actedBy;
+	}
+	public void setActedBy(TeamType causedBy) {
+		this.actedBy = causedBy;
+	}
+	
+	@Transient
+	public EventPlayer getMainActor() {
+		return mainActor;
+	}
+	public void setMainActor(EventPlayer mainActor) {
+		this.mainActor = mainActor;
 	}
 }
