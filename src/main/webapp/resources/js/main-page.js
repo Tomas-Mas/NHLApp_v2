@@ -44,13 +44,21 @@ function gamePageButtonClicked(target) {
 	window.location.href = 'game.jsp?id=' + gameId;
 }
 
-function mainTableHeaderClicked(trEl) {
-	var rowId = getIdFromElement(trEl, true, 'headerRow');
-	var subRow = document.getElementById('dataRow' + rowId);
-	if(subRow.style.display === 'none') {
-		subRow.style.display = 'block';
+function mainTableHeaderClicked(headerRow) {
+	var rowId = getIdFromElement(headerRow, true, 'headerRow');
+	var dataRow = document.getElementById('dataRow' + rowId);
+	
+	if(dataRow.getElementsByTagName('td').length == 0) {
+		$.get("/NHL/mainpage/showGameDetail/" + rowId, (data, status) => {
+			alert('loading game detail data.. ' + status);
+			dataRow.innerHTML = data;
+		})
+	}
+	
+	if(dataRow.style.display === 'none') {
+		dataRow.style.display = 'block';
 	} else {
-		subRow.style.display = 'none';
+		dataRow.style.display = 'none';
 	}
 }
 

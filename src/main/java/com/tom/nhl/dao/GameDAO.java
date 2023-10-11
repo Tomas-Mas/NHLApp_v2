@@ -14,6 +14,7 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 
 import org.springframework.stereotype.Component;
 
@@ -23,6 +24,8 @@ import com.tom.nhl.entity.EventPlayerPK;
 import com.tom.nhl.entity.Game;
 import com.tom.nhl.entity.GameEvent;
 import com.tom.nhl.entity.Roster;
+import com.tom.nhl.entity.view.MainPageGameBasicData;
+import com.tom.nhl.entity.wrapper.GameBasicInfo;
 import com.tom.nhl.util.HibernateUtil;
 
 @Component
@@ -108,12 +111,47 @@ public class GameDAO {
 		return events;
 	}
 	
-	
+	public List<GameBasicInfo> getGamesBasicInfo(int season) {
+		EntityManager em = HibernateUtil.createEntityManager();
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		
+		CriteriaQuery<MainPageGameBasicData> query = cb.createQuery(MainPageGameBasicData.class);
+		Root<MainPageGameBasicData> gameViewRoot = query.from(MainPageGameBasicData.class);
+		
+		Subquery<Integer> sqSeasonFilter = query.subquery(Integer.class);
+		Root<Game> sqGameRoot = sqSeasonFilter.from(Game.class);
+		sqSeasonFilter.select(sqGameRoot.<Integer>get("id"))
+				.where(cb.equal(sqGameRoot.get("season"), season));
+		
+		query.select(gameViewRoot)
+				.where(cb.in(gameViewRoot.get("id")).value(sqSeasonFilter))
+				.orderBy(cb.desc(gameViewRoot.get("gameDate")));
+		List<MainPageGameBasicData> gameList = em.createQuery(query)
+				.setFirstResult(currentPage * pageSize)
+				.setMaxResults(pageSize)
+				.getResultList();
+		
+		CriteriaQuery<MainPageGameBasicData> finalQuery = cb.createQuery(MainPageGameBasicData.class);
+		Root<MainPageGameBasicData> gameRoot = finalQuery.from(MainPageGameBasicData.class);
+		gameRoot.fetch("goalsPerPeriod");
+		finalQuery.select(gameRoot)
+				.distinct(true)
+				.where(gameRoot.in(gameList))
+				.orderBy(cb.desc(gameRoot.get("gameDate")));
+		List<MainPageGameBasicData> resList = em.createQuery(finalQuery).getResultList();
+		
+		List<GameBasicInfo> games = new ArrayList<GameBasicInfo>();
+		for(MainPageGameBasicData g : resList) {
+			games.add(new GameBasicInfo(g));
+		}
+		
+		return games;
+	}
 	
 	/*
 	 * well, Fetch objects cant access attributes, so they are useless for conditions for m:n and 1:n relationships
 	 * fetchGraphs and subgraphs can replace fetch objects, so Join object can be used instead to access attributes but
-	 * it doesn't work for embedded ids, so I guess only way around it is to break complex queries to multiple ones
+	 * it doesn't work for embedded ids, so I guess only way around it is to break complex queries to multiple ones or views
 	 */
 	public void test(int season) {
 		EntityManager em = HibernateUtil.createEntityManager();
@@ -154,8 +192,7 @@ public class GameDAO {
 				}*/
 			}
 		}
-	}	
-	
+	}
 	private List<Integer> getFilteredGamesIds(int season, EntityManager em, CriteriaBuilder cb) {
 		CriteriaQuery<Integer> query = cb.createQuery(Integer.class);
 		Root<Game> game = query.from(Game.class);
@@ -168,6 +205,4 @@ public class GameDAO {
 				.getResultList();
 		return resList;
 	}
-	
-
 }

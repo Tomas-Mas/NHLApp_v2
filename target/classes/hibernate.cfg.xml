@@ -48,6 +48,9 @@
     <mapping class="com.tom.nhl.entity.GoalieStats"/>
     <mapping class="com.tom.nhl.entity.SkaterStats"/>
     <mapping class="com.tom.nhl.entity.EventPlayer"/>
+    
+    <mapping class="com.tom.nhl.entity.view.GoalsPerPeriod"/>
+    <mapping class="com.tom.nhl.entity.view.MainPageGameBasicData"/>
 
     <!-- Drop and re-create the database schema on startup -->
     <!-- <property name="hbm2ddl.auto">update</property>

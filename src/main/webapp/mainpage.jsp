@@ -10,6 +10,7 @@
 	<link rel="stylesheet" type="text/css" href="/NHL/src/css/title.css">
 	<link rel="stylesheet" type="text/css" href="/NHL/src/css/main-menu.css">
 	<link rel="stylesheet" type="text/css" href="/NHL/src/css/main-page.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 	<script src="/NHL/src/js/menu.js"></script>
 	<script src="/NHL/src/js/main-page.js"></script>
 </head>
@@ -26,16 +27,16 @@
 						<td>
 							<table class="resultsHeader">
 								<tr>
-									<td rowspan="2" class="resultsHeaderDate"> ${game.formattedGameDate} </td>
+									<td rowspan="2" class="resultsHeaderDate"> ${game.gameDate} </td>
 									<td class="resultsPics">
 										<div class="teamPic">
-											<img src="/NHL/src/img/team-icons/${game.homeTeam.abbreviation}.png" title="${game.homeTeam.name}" alt="${game.homeTeam.name}">
+											<img src="/NHL/src/img/team-icons/${game.homeTeamAbr}.png" title="${game.homeTeamName}" alt="${game.homeTeamName}">
 										</div>
 									</td>
-									<td class="resultsTeamName"> ${game.homeTeam.name} </td>
+									<td class="resultsTeamName"> ${game.homeTeamName} </td>
 									<td class="resultsScore"> ${game.homeScore} </td>
-									<td rowspan="2" class="resultsDetail"> ${game.resultDetail} </td>
-									<c:forEach items="${game.homePeriodScore}" var="score">
+									<td rowspan="2" class="resultsDetail"> ${game.endPeriodType} </td>
+									<c:forEach items="${game.homePeriodsScore}" var="score">
 										<td class="resultsPeriodScore numeric"> ${score} </td>
 									</c:forEach>
 									<td rowspan="2" class="resultsButton">
@@ -45,12 +46,12 @@
 								<tr>
 									<td class="resultsPics">
 										<div class="teamPic">
-											<img src="/NHL/src/img/team-icons/${game.awayTeam.abbreviation}.png" title="${game.awayTeam.name}" alt="${game.awayTeam.name}">
+											<img src="/NHL/src/img/team-icons/${game.awayTeamAbr}.png" title="${game.awayTeamName}" alt="${game.awayTeamName}">
 										</div>
 									</td>
-									<td class="resultsTeamName"> ${game.awayTeam.name} </td>
+									<td class="resultsTeamName"> ${game.awayTeamName} </td>
 									<td class="resultsScore"> ${game.awayScore} </td>
-									<c:forEach items="${game.awayPeriodScore}" var="score">
+									<c:forEach items="${game.awayPeriodsScore}" var="score">
 										<td class="resultsPeriodScore numeric"> ${score} </td>
 									</c:forEach>
 								</tr>
@@ -59,61 +60,7 @@
 					</tr>
 					
 					<tr id="dataRow${game.id}" class="dataRow" style="display: none">
-						<td class="matchData"> <!--colspan="3" -->
-							<c:forEach items="${game.eventsPerPeriod}" var="periodEvents" varStatus="loop">
-								<div class="periodHeader">
-									<div> ${loop.index+1}.period</div>
-									<div> ${game.homePeriodScore[loop.index]} - ${game.awayPeriodScore[loop.index]} </div>
-								</div>
-								<c:forEach items="${periodEvents}" var="event">
-									<div class="eventLine${event.actedBy}">
-										<div class="periodEventTime">${event.periodTime}</div>
-										<c:choose>
-											<c:when test="${event.event.name == 'Goal'}" >
-												<div class="periodEventIcon"><img src="/NHL/src/img/game-detail-icons/goal-icon.png" title="${event.event.secondaryType}"></div>
-												<div class="periodEventMainPlayer">
-													<a id="${event.mainActor.id.roster.player.id}" class="gameDetailPlayerName">
-														${event.mainActor.id.roster.player.firstName} ${event.mainActor.id.roster.player.lastName}
-													</a>
-												</div>
-												<c:if test="${event.event.strength != 'Even'}">
-													<div class="periodEventStrength"> (${event.event.strength}) </div>
-												</c:if>
-												<div class="periodEventAssist">
-													<c:set value="true" var="isFirst"/>
-													<c:forEach items="${event.players}" var="player">
-														<c:if test="${player.role == 'Assist'}">
-															<c:choose>
-																<c:when test="${isFirst}"> 
-																	${player.id.roster.player.firstName} ${player.id.roster.player.lastName} 
-																	<c:set value="false" var="isFirst"/>
-																</c:when>
-																<c:otherwise>
-																	+ ${player.id.roster.player.firstName} ${player.id.roster.player.lastName} 
-																</c:otherwise>
-															</c:choose>
-														</c:if>
-													</c:forEach>
-												</div>
-												
-											</c:when>
-											<c:otherwise>
-												<div class="periodEventIcon">
-													<img src="/NHL/src/img/game-detail-icons/penalty${event.event.penaltyMinutes}.png" 
-															title="${event.event.penaltyMinutes} minutes ${event.event.penaltySeverity} - ${event.event.secondaryType}">
-												</div>
-												<div class="periodEventMainPlayer">
-													<a id="${event.mainActor.id.roster.player.id}" class="gameDetailPlayerName">
-														${event.mainActor.id.roster.player.firstName} ${event.mainActor.id.roster.player.lastName}
-													</a>
-												</div>
-												<div class="periodEventPenaltyType"> (${event.event.secondaryType})</div>
-											</c:otherwise>
-										</c:choose>
-									</div>
-								</c:forEach>
-							</c:forEach>
-						</td>
+
 					</tr>
 				</c:forEach>
 			</table>

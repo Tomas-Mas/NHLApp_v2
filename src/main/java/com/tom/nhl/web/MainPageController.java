@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.tom.nhl.service.GameService;
 
@@ -20,7 +21,7 @@ public class MainPageController {
 	//private TestSeasonService seasonService;
 	@Autowired
 	private GameService gameService;
-
+	
 	@RequestMapping("")
 	public String processSeasonlessUrl(@CookieValue(value = "season", defaultValue = "0") Integer season, HttpServletResponse response) {
 		if(season == 0) {
@@ -38,9 +39,16 @@ public class MainPageController {
 		model.addAttribute("seasons", gameService.getSeasons());
 		model.addAttribute("selectedSeason", season);
 		
-		model.addAttribute("games", gameService.getGamesBySeasonWithKeyEvents(season));
+		model.addAttribute("games", gameService.getGamesBasicInfo(season));
 		
 		return "/mainpage.jsp";
+	}
+	
+	@RequestMapping(value = "/showGameDetail/{id}", method = RequestMethod.GET)
+	public String showGameDetail(@PathVariable int id, Model model) {
+		System.out.println("showing game " + id);
+		System.out.println("contains games? " + model.containsAttribute("games"));
+		return "/game-detail-test.jsp";
 	}
 	
 	private void addCookie(String name, String value, HttpServletResponse response) {

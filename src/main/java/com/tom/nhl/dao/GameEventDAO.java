@@ -27,6 +27,7 @@ import com.tom.nhl.util.HibernateUtil;
 @Component
 public class GameEventDAO {
 
+	/*
 	public List<GameEvent> getKeyEvents(Game game) {
 		EntityManager em = HibernateUtil.createEntityManager();
 		
@@ -64,5 +65,5 @@ public class GameEventDAO {
 			keyEvents.add(e);
 		}
 		return keyEvents;
-	}
+	}*/
 }

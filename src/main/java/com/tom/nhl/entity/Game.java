@@ -1,7 +1,6 @@
 package com.tom.nhl.entity;
 
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -15,9 +14,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
+
+import org.hibernate.annotations.Immutable;
 
 @Entity
+@Immutable
 @Table(name = "Games")
 public class Game {
 
@@ -34,11 +35,11 @@ public class Game {
 	private GameStatus gameStatus;
 	private List<GameEvent> events;
 	
-	private String resultDetail;
+	/*private String resultDetail;
 	private String formattedGameDate;
 	private List<Integer> homePeriodScore;
 	private List<Integer> awayPeriodScore;
-	private List<List<GameEvent>> eventsPerPeriod;
+	private List<List<GameEvent>> eventsPerPeriod;*/
 	
 	@Id
 	@SequenceGenerator(name = "gameIdGenerator", sequenceName = "SEQ_GAMES_ID", allocationSize = 1)
@@ -143,6 +144,7 @@ public class Game {
 		this.events = events;
 	}
 	
+	/*
 	@Transient
 	public String getFormattedGameDate() {
 		formattedGameDate = new SimpleDateFormat("dd.MM.yyyy HH:mm").format(getGameDate());
@@ -196,6 +198,6 @@ public class Game {
 	public void setEventsPerPeriod(List<List<GameEvent>> eventsPerPeriod) {
 		this.eventsPerPeriod = eventsPerPeriod;
 	}
-	
+	*/
 	
 }

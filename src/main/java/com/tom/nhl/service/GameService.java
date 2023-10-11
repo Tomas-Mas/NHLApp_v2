@@ -1,17 +1,12 @@
 package com.tom.nhl.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.tom.nhl.dao.GameDAO;
-import com.tom.nhl.entity.EventPlayer;
-import com.tom.nhl.entity.Game;
-import com.tom.nhl.entity.GameEvent;
-import com.tom.nhl.enums.TeamType;
-import com.tom.nhl.util.LogUtil;
+import com.tom.nhl.entity.wrapper.GameBasicInfo;
 
 @Component
 public class GameService {
@@ -43,15 +38,15 @@ public class GameService {
 		return false;
 	}
 	
-	public List<Game> getGamesBySeasonWithKeyEvents(int season) {
+	public List<GameBasicInfo> getGamesBasicInfo(int season) {
 		long start = System.currentTimeMillis();
-		List<Game> games = gameDAO.getGamesBySeasonWithKeyEvents(season);
-		setTransientVariables(games);
-		System.out.println("fetching game with events took: " + (System.currentTimeMillis() - start));
+		List<GameBasicInfo> games = gameDAO.getGamesBasicInfo(season);
+		System.out.println("fancy fetching of games took: " + (System.currentTimeMillis() - start));
 		
 		return games;
 	}
 	
+	/*
 	private void setTransientVariables(List<Game> games) {
 		long start = System.currentTimeMillis();
 		for(Game game : games) {
@@ -104,4 +99,5 @@ public class GameService {
 		}
 		System.out.println("setting transient variables took: " + (System.currentTimeMillis() - start));
 	}
+	*/
 }
