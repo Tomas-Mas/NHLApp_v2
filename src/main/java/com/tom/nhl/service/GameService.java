@@ -1,12 +1,18 @@
 package com.tom.nhl.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.tom.nhl.api.game.GameBaseData;
+import com.tom.nhl.api.game.GameKeyEventsData;
 import com.tom.nhl.dao.GameDAO;
-import com.tom.nhl.entity.wrapper.GameBasicInfo;
+import com.tom.nhl.entity.GameEvent;
+import com.tom.nhl.entity.view.MainPageGameBasicData;
 
 @Component
 public class GameService {
@@ -38,12 +44,50 @@ public class GameService {
 		return false;
 	}
 	
-	public List<GameBasicInfo> getGamesBasicInfo(int season) {
+	public List<GameBaseData> getGamesBaseData(int season) {
 		long start = System.currentTimeMillis();
-		List<GameBasicInfo> games = gameDAO.getGamesBasicInfo(season);
+		List<GameBaseData> games = new ArrayList<GameBaseData>();
+		for(MainPageGameBasicData game : gameDAO.fetchGamesBasicData(season)) {
+			games.add(new GameBaseData(game));
+		}
 		System.out.println("fancy fetching of games took: " + (System.currentTimeMillis() - start));
 		
 		return games;
+	}
+	
+	public List<GameKeyEventsData> getGameKeyEventsData(int gameId) {
+		long start = System.currentTimeMillis();
+		List<GameEvent> events = gameDAO.fetchGamesKeyEvents(gameId);
+		List<GameKeyEventsData> eventsPerPeriod = mapGameEvents(events);
+		System.out.println("fancy fetching of events took: " + (System.currentTimeMillis() - start));
+		
+		return eventsPerPeriod;
+	}
+	
+	private List<GameKeyEventsData> mapGameEvents(List<GameEvent> events) {
+		Map<Integer, List<GameEvent>> periodEventsMap = new HashMap<Integer, List<GameEvent>>();
+		for(int i = 1; i <= events.get(events.size() - 1).getPeriodNumber(); i++) {
+			periodEventsMap.put(i, new ArrayList<GameEvent>());
+		}
+		
+		for(GameEvent event : events) {
+			periodEventsMap.get(event.getPeriodNumber()).add(event);
+		}
+		
+		List<GameKeyEventsData> eventsPerPeriod = new ArrayList<GameKeyEventsData>();
+		for(Integer period : periodEventsMap.keySet()) {
+			eventsPerPeriod.add(new GameKeyEventsData(period, periodEventsMap.get(period)));
+		}
+		
+		/*
+		for(GameKeyEventsData res : eventsPerPeriod) {
+			System.out.println(res.getPeriodNumber() + " ; " + res.getPeriodScore());
+			for(KeyEvent event : res.getEvents()) {
+				System.out.println(event.getActedBy().formatted() + " - " + event.getPeriodTime() + " - " + event.getName());
+			}
+		}*/
+		
+		return eventsPerPeriod;
 	}
 	
 	/*

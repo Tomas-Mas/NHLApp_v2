@@ -25,7 +25,6 @@ import com.tom.nhl.entity.Game;
 import com.tom.nhl.entity.GameEvent;
 import com.tom.nhl.entity.Roster;
 import com.tom.nhl.entity.view.MainPageGameBasicData;
-import com.tom.nhl.entity.wrapper.GameBasicInfo;
 import com.tom.nhl.util.HibernateUtil;
 
 @Component
@@ -42,76 +41,7 @@ public class GameDAO {
 		return seasons;
 	}
 	
-	public List<Game> getGamesBySeasonWithKeyEvents(int season) {
-		EntityManager em = HibernateUtil.createEntityManager();
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		
-		EntityGraph<Game> fetchGraph = em.createEntityGraph(Game.class);
-		fetchGraph.addSubgraph("homeTeam");
-		fetchGraph.addSubgraph("awayTeam");
-		fetchGraph.addSubgraph("venue");
-		fetchGraph.addSubgraph("gameStatus");
-		
-		CriteriaQuery<Game> query = cb.createQuery(Game.class);
-		Root<Game> gameRoot = query.from(Game.class);
-		
-		query.select(gameRoot)
-				.where(cb.equal(gameRoot.get("season"), season))
-				.orderBy(cb.desc(gameRoot.get("gameDate")));
-		
-		List<Game> games = em.createQuery(query)
-				.setHint("javax.persistence.loadgraph", fetchGraph)
-				.setFirstResult(currentPage * pageSize)
-				.setMaxResults(pageSize)
-				.getResultList();
-		
-		for(Game game : games) {
-			em.detach(game);
-			game.setEvents(fetchKeyEvents(game));
-		}
-		
-		return games;
-	}
-	
-	private List<String> getKeyEventFilter() {
-		List<String> filter = new ArrayList<String>();
-		filter.add("Goal");
-		filter.add("Penalty");
-		return filter;
-	}
-	
-	private List<GameEvent> fetchKeyEvents(Game game) {
-		EntityManager em = HibernateUtil.createEntityManager();
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		
-		CriteriaQuery<GameEvent> query = cb.createQuery(GameEvent.class);
-		Root<GameEvent> eventRoot = query.from(GameEvent.class);
-		eventRoot.fetch("event", JoinType.LEFT);
-		Fetch<GameEvent,EventPlayer> eventPlayerFetch = eventRoot.fetch("players", JoinType.LEFT);
-		Fetch<EventPlayer,EventPlayerPK> eventPlayerPKFetch = eventPlayerFetch.fetch("id");
-		Fetch<EventPlayerPK,Roster> rosterFetch = eventPlayerPKFetch.fetch("roster", JoinType.LEFT);
-		rosterFetch.fetch("player", JoinType.LEFT);
-		rosterFetch.fetch("team", JoinType.LEFT);
-		
-		Predicate gamePredicate = cb.equal(eventRoot.get("game"), game);
-		Predicate eventNamePredicate = eventRoot.get("event").get("name").in(getKeyEventFilter());
-		
-		query.select(eventRoot)
-				.distinct(true)
-				.where(cb.and(gamePredicate, eventNamePredicate))
-				.orderBy(cb.asc(eventRoot.get("jsonId")));
-		
-		List<GameEvent> events = em.createQuery(query)
-				.getResultList();
-		
-		for(GameEvent e : events) {
-			em.detach(e);
-		}
-		
-		return events;
-	}
-	
-	public List<GameBasicInfo> getGamesBasicInfo(int season) {
+	public List<MainPageGameBasicData> fetchGamesBasicData(int season) {
 		EntityManager em = HibernateUtil.createEntityManager();
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		
@@ -138,14 +68,51 @@ public class GameDAO {
 				.distinct(true)
 				.where(gameRoot.in(gameList))
 				.orderBy(cb.desc(gameRoot.get("gameDate")));
-		List<MainPageGameBasicData> resList = em.createQuery(finalQuery).getResultList();
-		
+		List<MainPageGameBasicData> games = em.createQuery(finalQuery).getResultList();
+		/*
 		List<GameBasicInfo> games = new ArrayList<GameBasicInfo>();
 		for(MainPageGameBasicData g : resList) {
 			games.add(new GameBasicInfo(g));
 		}
-		
+		*/
 		return games;
+	}
+	
+	public List<GameEvent> fetchGamesKeyEvents(int id) {
+		EntityManager em = HibernateUtil.createEntityManager();
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		
+		CriteriaQuery<GameEvent> query = cb.createQuery(GameEvent.class);
+		Root<GameEvent> eventRoot = query.from(GameEvent.class);
+		eventRoot.fetch("game", JoinType.LEFT);
+		eventRoot.fetch("event", JoinType.LEFT);
+		Fetch<GameEvent,EventPlayer> eventPlayerFetch = eventRoot.fetch("players", JoinType.LEFT);
+		Fetch<EventPlayer,EventPlayerPK> eventPlayerPKFetch = eventPlayerFetch.fetch("id");
+		Fetch<EventPlayerPK,Roster> rosterFetch = eventPlayerPKFetch.fetch("roster", JoinType.LEFT);
+		rosterFetch.fetch("player", JoinType.LEFT);
+		rosterFetch.fetch("team", JoinType.LEFT);
+		
+		Subquery<Game> gameSelectionSubquery = query.subquery(Game.class);
+		Root<Game> sqGameRoot = gameSelectionSubquery.from(Game.class);
+		gameSelectionSubquery.select(sqGameRoot)
+				.where(cb.equal(sqGameRoot.get("id"), id));
+		
+		Predicate gamePredicate = cb.equal(eventRoot.get("game"), gameSelectionSubquery);
+		Predicate eventNamePredicate = eventRoot.get("event").get("name").in(getKeyEventFilter());
+		
+		query.select(eventRoot)
+				.distinct(true)
+				.where(cb.and(gamePredicate, eventNamePredicate))
+				.orderBy(cb.asc(eventRoot.get("jsonId")));
+		
+		List<GameEvent> events = em.createQuery(query)
+				.getResultList();
+		
+		for(GameEvent e : events) {
+			em.detach(e);
+		}
+		
+		return events;
 	}
 	
 	/*
@@ -204,5 +171,76 @@ public class GameDAO {
 				.setMaxResults(pageSize)
 				.getResultList();
 		return resList;
+	}
+	
+	/*
+	 * replaced by fetchGamesBasicInfo
+	*/
+	@Deprecated
+	public List<Game> getGamesBySeasonWithKeyEvents(int season) {
+		EntityManager em = HibernateUtil.createEntityManager();
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		
+		EntityGraph<Game> fetchGraph = em.createEntityGraph(Game.class);
+		fetchGraph.addSubgraph("homeTeam");
+		fetchGraph.addSubgraph("awayTeam");
+		fetchGraph.addSubgraph("venue");
+		fetchGraph.addSubgraph("gameStatus");
+		
+		CriteriaQuery<Game> query = cb.createQuery(Game.class);
+		Root<Game> gameRoot = query.from(Game.class);
+		
+		query.select(gameRoot)
+				.where(cb.equal(gameRoot.get("season"), season))
+				.orderBy(cb.desc(gameRoot.get("gameDate")));
+		
+		List<Game> games = em.createQuery(query)
+				.setHint("javax.persistence.loadgraph", fetchGraph)
+				.setFirstResult(currentPage * pageSize)
+				.setMaxResults(pageSize)
+				.getResultList();
+		
+		for(Game game : games) {
+			em.detach(game);
+			game.setEvents(fetchKeyEvents(game));
+		}
+		
+		return games;
+	}
+	private List<String> getKeyEventFilter() {
+		List<String> filter = new ArrayList<String>();
+		filter.add("Goal");
+		filter.add("Penalty");
+		return filter;
+	}
+	private List<GameEvent> fetchKeyEvents(Game game) {
+		EntityManager em = HibernateUtil.createEntityManager();
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		
+		CriteriaQuery<GameEvent> query = cb.createQuery(GameEvent.class);
+		Root<GameEvent> eventRoot = query.from(GameEvent.class);
+		eventRoot.fetch("event", JoinType.LEFT);
+		Fetch<GameEvent,EventPlayer> eventPlayerFetch = eventRoot.fetch("players", JoinType.LEFT);
+		Fetch<EventPlayer,EventPlayerPK> eventPlayerPKFetch = eventPlayerFetch.fetch("id");
+		Fetch<EventPlayerPK,Roster> rosterFetch = eventPlayerPKFetch.fetch("roster", JoinType.LEFT);
+		rosterFetch.fetch("player", JoinType.LEFT);
+		rosterFetch.fetch("team", JoinType.LEFT);
+		
+		Predicate gamePredicate = cb.equal(eventRoot.get("game"), game);
+		Predicate eventNamePredicate = eventRoot.get("event").get("name").in(getKeyEventFilter());
+		
+		query.select(eventRoot)
+				.distinct(true)
+				.where(cb.and(gamePredicate, eventNamePredicate))
+				.orderBy(cb.asc(eventRoot.get("jsonId")));
+		
+		List<GameEvent> events = em.createQuery(query)
+				.getResultList();
+		
+		for(GameEvent e : events) {
+			em.detach(e);
+		}
+		
+		return events;
 	}
 }

@@ -1,4 +1,4 @@
-package com.tom.nhl.entity.wrapper;
+package com.tom.nhl.api.game;
 
 import java.text.SimpleDateFormat;
 
@@ -7,7 +7,7 @@ import com.tom.nhl.entity.view.MainPageGameBasicData;
 import com.tom.nhl.enums.TeamType;
 import com.tom.nhl.util.LogUtil;
 
-public class GameBasicInfo {
+public class GameBaseData {
 
 	private int id;
 	private String gameDate;
@@ -21,7 +21,7 @@ public class GameBasicInfo {
 	private int[] homePeriodsScore;
 	private int[] awayPeriodsScore;
 	
-	public GameBasicInfo(MainPageGameBasicData gameData) {
+	public GameBaseData(MainPageGameBasicData gameData) {
 		this.id = gameData.getId();
 		this.gameDate = new SimpleDateFormat("dd.MM.yyyy HH:mm").format(gameData.getGameDate());
 		this.homeTeamName = gameData.getHomeTeam();

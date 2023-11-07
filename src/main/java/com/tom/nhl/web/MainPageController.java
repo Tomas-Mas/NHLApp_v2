@@ -39,7 +39,7 @@ public class MainPageController {
 		model.addAttribute("seasons", gameService.getSeasons());
 		model.addAttribute("selectedSeason", season);
 		
-		model.addAttribute("games", gameService.getGamesBasicInfo(season));
+		model.addAttribute("games", gameService.getGamesBaseData(season));
 		
 		return "/mainpage.jsp";
 	}
@@ -47,7 +47,7 @@ public class MainPageController {
 	@RequestMapping(value = "/showGameDetail/{id}", method = RequestMethod.GET)
 	public String showGameDetail(@PathVariable int id, Model model) {
 		System.out.println("showing game " + id);
-		System.out.println("contains games? " + model.containsAttribute("games"));
+		model.addAttribute("gameEvents", gameService.getGameKeyEventsData(id));
 		return "/game-detail-test.jsp";
 	}
 	
