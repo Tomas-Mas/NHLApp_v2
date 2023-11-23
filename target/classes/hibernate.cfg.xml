@@ -51,6 +51,7 @@
     
     <mapping class="com.tom.nhl.entity.view.GoalsPerPeriod"/>
     <mapping class="com.tom.nhl.entity.view.MainPageGameBasicData"/>
+    <mapping class="com.tom.nhl.entity.view.RegulationTeamStats"/>
 
     <!-- Drop and re-create the database schema on startup -->
     <!-- <property name="hbm2ddl.auto">update</property>

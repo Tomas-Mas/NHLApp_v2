@@ -7,19 +7,19 @@ public class FrontController extends AbstractAnnotationConfigDispatcherServletIn
 	@Override
 	protected Class<?>[] getRootConfigClasses() {
 		// TODO Auto-generated method stub
-		return new Class[] {MvcConfig.class};
+		return null;
 	}
 
 	@Override
 	protected Class<?>[] getServletConfigClasses() {
 		// TODO Auto-generated method stub
-		return null;
+		return new Class[] { MvcConfig.class };
 	}
 
 	@Override
 	protected String[] getServletMappings() {
 		// TODO Auto-generated method stub
-		return new String[] {"/"};
+		return new String[] { "/" };
 	}
 
 }

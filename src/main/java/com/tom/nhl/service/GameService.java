@@ -10,15 +10,19 @@ import org.springframework.stereotype.Component;
 
 import com.tom.nhl.api.game.GameBaseData;
 import com.tom.nhl.api.game.GameKeyEventsData;
-import com.tom.nhl.dao.GameDAO;
+import com.tom.nhl.api.stats.RegulationTeamStandings;
+import com.tom.nhl.api.stats.TeamStats;
+import com.tom.nhl.dao.JPAGameDAO;
 import com.tom.nhl.entity.GameEvent;
 import com.tom.nhl.entity.view.MainPageGameBasicData;
+import com.tom.nhl.entity.view.RegulationTeamStats;
+import com.tom.nhl.enums.StatsType;
 
 @Component
 public class GameService {
 
 	@Autowired
-	private GameDAO gameDAO;
+	private JPAGameDAO gameDAO;
 	//@Autowired
 	//private GameEventDAO gameEventDAO;
 	
@@ -64,6 +68,15 @@ public class GameService {
 		return eventsPerPeriod;
 	}
 	
+	public RegulationTeamStandings getTeamStandings(int season, StatsType statsType) {
+		long start = System.currentTimeMillis();
+		List<RegulationTeamStats> dbStats = gameDAO.fetchTeamStandings(season);
+		RegulationTeamStandings teamStandings = mapTeamStandings(season, dbStats, statsType);
+		System.out.println("fetching of team standings took: " + (System.currentTimeMillis() - start));
+		
+		return teamStandings;
+	}
+	
 	private List<GameKeyEventsData> mapGameEvents(List<GameEvent> events) {
 		Map<Integer, List<GameEvent>> periodEventsMap = new HashMap<Integer, List<GameEvent>>();
 		for(int i = 1; i <= events.get(events.size() - 1).getPeriodNumber(); i++) {
@@ -79,69 +92,65 @@ public class GameService {
 			eventsPerPeriod.add(new GameKeyEventsData(period, periodEventsMap.get(period)));
 		}
 		
-		/*
-		for(GameKeyEventsData res : eventsPerPeriod) {
-			System.out.println(res.getPeriodNumber() + " ; " + res.getPeriodScore());
-			for(KeyEvent event : res.getEvents()) {
-				System.out.println(event.getActedBy().formatted() + " - " + event.getPeriodTime() + " - " + event.getName());
-			}
-		}*/
-		
 		return eventsPerPeriod;
 	}
 	
-	/*
-	private void setTransientVariables(List<Game> games) {
-		long start = System.currentTimeMillis();
-		for(Game game : games) {
-			//finding event's actor (actor = home or away team)
-			for(GameEvent event : game.getEvents()) {
-				for(EventPlayer player : event.getPlayers()) {
-					String role = player.getRole();
-					if(role.equals("Scorer") || role.equals("PenaltyOn")) {	//Scorer and Assists for goal events, PenaltyOn for Penalty events
-						event.setMainActor(player);
-						if(game.getHomeTeam().getId() == player.getId().getRoster().getTeam().getId())
-							event.setActedBy(TeamType.HOME);
-						else if(game.getAwayTeam().getId() == player.getId().getRoster().getTeam().getId())
-							event.setActedBy(TeamType.AWAY);
-						else 
-							LogUtil.writeLog("event actor wasn't found");
-						
-						break;
-					}
-				}
+	private RegulationTeamStandings mapTeamStandings(int season, List<RegulationTeamStats> dbStats, StatsType statsType) {
+		ArrayList<TeamStats> teamStats = new ArrayList<TeamStats>();
+		for(RegulationTeamStats team : dbStats) {
+			if(statsType == StatsType.OVERALL) {
+				teamStats.add(new TeamStats(
+						team.getTeamName(),
+						team.getTeamAbbreviation(),
+						team.getId().getTeamId(),
+						team.getConference(),
+						team.getDivision(),
+						team.getId().getSeason(),
+						team.getHomeGames() + team.getAwayGames(),
+						team.getHomeGoalsFor() + team.getAwayGoalsFor(),
+						team.getHomeGoalsAgainst() + team.getAwayGoalsAgainst(),
+						team.getHomePoints() + team.getAwayPoints(),
+						team.getHomeRegWins() + team.getAwayRegWins(),
+						team.getHomeRegLoses() + team.getAwayRegLoses(),
+						team.getHomeOtWins() + team.getAwayOtWins(),
+						team.getHomeOtLoses() + team.getAwayOtLoses()
+				));
+			} else if(statsType == StatsType.HOME) {
+				teamStats.add(new TeamStats(
+						team.getTeamName(),
+						team.getTeamAbbreviation(),
+						team.getId().getTeamId(),
+						team.getConference(),
+						team.getDivision(),
+						team.getId().getSeason(),
+						team.getHomeGames(),
+						team.getHomeGoalsFor(),
+						team.getHomeGoalsAgainst(),
+						team.getHomePoints(),
+						team.getHomeRegWins(),
+						team.getHomeRegLoses(),
+						team.getHomeOtWins(),
+						team.getHomeOtLoses()
+				));
+			} else if(statsType == StatsType.AWAY) {
+				teamStats.add(new TeamStats(
+						team.getTeamName(),
+						team.getTeamAbbreviation(),
+						team.getId().getTeamId(),
+						team.getConference(),
+						team.getDivision(),
+						team.getId().getSeason(),
+						team.getAwayGames(),
+						team.getAwayGoalsFor(),
+						team.getAwayGoalsAgainst(),
+						team.getAwayPoints(),
+						team.getAwayRegWins(),
+						team.getAwayRegLoses(),
+						team.getAwayOtWins(),
+						team.getAwayOtLoses()
+				));
 			}
-			
-			int lastPeriodNum = game.getEvents().get(game.getEvents().size() -1).getPeriodNumber();
-			List<List<GameEvent>> eventsPerPeriod = new ArrayList<List<GameEvent>>(lastPeriodNum);
-			List<Integer> homeScore = new ArrayList<Integer>(lastPeriodNum);
-			List<Integer> awayScore = new ArrayList<Integer>(lastPeriodNum);
-			for(int i = 0; i < lastPeriodNum; i++) {
-				homeScore.add(i, 0);
-				awayScore.add(i, 0);
-				eventsPerPeriod.add(i, new ArrayList<GameEvent>());
-			}
-			
-			for(GameEvent event : game.getEvents()) {
-				int periodIndex = event.getPeriodNumber() - 1;
-				List<GameEvent> events = eventsPerPeriod.get(periodIndex);
-				events.add(event);
-				eventsPerPeriod.set(periodIndex, events);
-				
-				if(event.getEvent().getName().equals("Goal")) {
-					if(event.getActedBy() == TeamType.HOME) {
-						homeScore.set(periodIndex, homeScore.get(periodIndex) + 1);
-					} else {
-						awayScore.set(periodIndex, awayScore.get(periodIndex) + 1);
-					}
-				}
-			}
-
-			game.setEventsPerPeriod(eventsPerPeriod);
-			game.setHomePeriodScore(homeScore);
-			game.setAwayPeriodScore(awayScore);
 		}
-		System.out.println("setting transient variables took: " + (System.currentTimeMillis() - start));
+		return new RegulationTeamStandings(season, teamStats);
 	}
-	*/
 }

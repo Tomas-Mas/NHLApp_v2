@@ -16,10 +16,78 @@
 
 #regulationStats {
 	flex: 1;
-	margin: 10px;
+	margin-top: 10px;
 }
 
-#regulationStats table{
+#seasonScope {
+	margin-bottom: 10px;
+}
+
+#seasonScope input[type="radio"]{
+	opacity: 0;
+	width: 0;
+	margin: 0px;
+}
+
+#seasonScope label {
+	width: 47.7%;
+}
+
+#regulationScope {
+	overflow: hidden;
+	margin-bottom: -5px;
+}
+
+#regulationScope input[type="radio"] {
+	opacity: 0;
+	width: 0;
+	margin: 0;
+	/*position: fixed;*/
+}
+
+#regulationScope label {
+	width: 31%;
+}
+
+#seasonScope label, #regulationScope label {
+	display: inline-block;
+	text-align: center;
+	background: var(--contentMainTableRowHover);
+	/*border: inset 1px;*/
+	color: var(--contentMainTableTextColor);
+	padding-top: 5px;
+	padding-bottom: 5px;
+	cursor: pointer;
+}
+
+#regulationScope input[type="radio"]:hover + label, #seasonScope input[type="radio"]:hover + label {
+	background: var(--contentMainTableBackground);
+	text-shadow: 2px 2px 1px black;
+	font-weight: bold;
+}
+
+#regulationScope input[type="radio"]:checked + label, #seasonScope input[type="radio"]:checked + label {
+	background: var(--contentMainTableBackground);
+}
+
+/*.regulationScopeTabLinks {
+	width: 33%;
+	padding-left: 0px;
+	padding-right: 0px;
+	background-color: inherit;
+	color: var(--contentMainTableRowHover);
+	float: left;
+	border: none;
+	outline: none; 
+	cursor: pointer;
+	transition: 0.3s;
+}
+
+.regulationScopeTabLinks:hover {
+	background-color: #ddd;
+}*/
+
+#regulationStatsTable table{
 	border-collapse: collapse;
 	width: 100%;
 	margin-top: 10px;
@@ -27,35 +95,35 @@
 	/*font-size: 11px;*/
 }
 
-#regulationStats th {
+#regulationStatsTable th {
 	background-color: var(--htmlBackground);
 	/*font-size: 13px;*/
 	margin-bottom: 5px;
 }
 
-#regulationStats .conferenceName{
+#regulationStatsTable .conferenceName{
 	padding-left: 10px;
 	text-align: left;
 }
 
-#regulationStats tr.header:not(:first-child) th {
+#regulationStatsTable tr.header:not(:first-child) th {
 	padding-top: 10px;
 }
 
-#regulationStats tr {
+#regulationStatsTable tr {
 	border-bottom: 1px solid var(--contentMainTableRowLine);
 }
 
-#regulationStats tr:not(.header):hover {
+#regulationStatsTable tr:not(.header):hover {
 	background-color: var(--contentMainTableRowHover);
 }
 
-#regulationStats td {
+#regulationStatsTable td {
 	padding-top: 4px;
 	padding-bottom: 4px;
 }
 
-#regulationStats .teamName:hover{
+#regulationStatsTable .teamName:hover{
 	cursor: pointer;
 	text-shadow: 2px 2px 1px black;
 }
@@ -64,15 +132,15 @@
 	text-align: center;
 }
 
-#regulationStats table tr {
+#regulationStatsTable table tr {
 	color: var(--contentMainTableRowLine);
 }
 
-#regulationStats table tr:first-child {
+#regulationStatsTable table tr:first-child {
 	width: 400px;
 }
 
-#regulationStats table .teamPic {
+#regulationStatsTable table .teamPic {
 	width: 15px;
 	height: 15px;
 }
