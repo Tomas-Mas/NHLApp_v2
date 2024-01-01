@@ -32,29 +32,29 @@
 <div id="regulationStatsTable">
 	<div id="regulationScope">
 		<c:choose>
-			<c:when test="${standingsScope.type=='Overall'}">
-				<input type="radio" id="overall" name="regulationScope" checked />
+			<c:when test="${regulationScope.type=='Overall'}">
+				<input type="radio" id="overall" class="regulationScope" name="regulationScope" checked />
 			</c:when>
 			<c:otherwise>
-				<input type="radio" id="overall" name="regulationScope" />
+				<input type="radio" id="overall" class="regulationScope" name="regulationScope" />
 			</c:otherwise>
 		</c:choose>
 		<label for="overall">Overall</label>
 		<c:choose>
-			<c:when test="${standingsScope.type=='Home'}">
-				<input type="radio" id="home" name="regulationScope" checked />
+			<c:when test="${regulationScope.type=='Home'}">
+				<input type="radio" id="home" class="regulationScope" name="regulationScope" checked />
 			</c:when>
 			<c:otherwise>
-				<input type="radio" id="home" name="regulationScope" />
+				<input type="radio" id="home" class="regulationScope" name="regulationScope" />
 			</c:otherwise>
 		</c:choose>
 		<label for="home">Home</label>
 		<c:choose>
-			<c:when test="${standingsScope.type=='Away'}">
-				<input type="radio" id="away" name="regulationScope" checked />
+			<c:when test="${regulationScope.type=='Away'}">
+				<input type="radio" id="away" class="regulationScope" name="regulationScope" checked />
 			</c:when>
 			<c:otherwise>
-				<input type="radio" id="away" name="regulationScope" />
+				<input type="radio" id="away" class="regulationScope" name="regulationScope" />
 			</c:otherwise>
 		</c:choose>
 		<label for="away">Away</label>

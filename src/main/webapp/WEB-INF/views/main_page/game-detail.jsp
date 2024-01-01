@@ -10,9 +10,10 @@
 			<div> ${periodEvents.periodScore} </div>
 		</div>
 		<c:forEach items="${periodEvents.events}" var="event">
-			<div class="eventLine${event.actedBy.title}">
+			<div class="eventLine${event.actedBy.type}">
 				<c:choose>
 					<c:when test="${event.name == 'Goal'}" >
+						<div class="periodEventTime">${event.periodTime}</div>
 						<div class="periodEventIcon"><img src="/NHL/src/img/game-detail-icons/goal-icon.png" title="${event.secondaryType}"></div>
 						<div class="periodEventMainPlayer">
 							<a id="${event.mainActor.id}" class="gameDetailPlayerName">
@@ -38,6 +39,7 @@
 						</div>
 					</c:when>
 					<c:otherwise>
+						<div class="periodEventTime">${event.periodTime}</div>
 						<div class="periodEventIcon">
 							<img src="/NHL/src/img/game-detail-icons/penalty${event.penaltyMinutes}.png" 
 									title="${event.penaltyMinutes} minutes ${event.penaltySeverity} - ${event.secondaryType}">

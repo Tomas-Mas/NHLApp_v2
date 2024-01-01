@@ -1,12 +1,5 @@
 package com.tom.nhl.api.game;
 
-import java.text.SimpleDateFormat;
-
-import com.tom.nhl.entity.view.GoalsPerPeriod;
-import com.tom.nhl.entity.view.MainPageGameBasicData;
-import com.tom.nhl.enums.TeamType;
-import com.tom.nhl.util.LogUtil;
-
 public class GameBaseData {
 
 	private int id;
@@ -21,30 +14,20 @@ public class GameBaseData {
 	private int[] homePeriodsScore;
 	private int[] awayPeriodsScore;
 	
-	public GameBaseData(MainPageGameBasicData gameData) {
-		this.id = gameData.getId();
-		this.gameDate = new SimpleDateFormat("dd.MM.yyyy HH:mm").format(gameData.getGameDate());
-		this.homeTeamName = gameData.getHomeTeam();
-		this.homeTeamAbr = gameData.getHomeAbr();
-		this.homeScore = gameData.getHomeScore();
-		this.awayTeamName = gameData.getAwayTeam();
-		this.awayTeamAbr = gameData.getAwayAbr();
-		this.awayScore = gameData.getAwayScore();
-		this.endPeriodType = gameData.getEndPeriodType();
-		
-		homePeriodsScore = new int[gameData.getEndPeriod()];
-		awayPeriodsScore = new int[gameData.getEndPeriod()];
-		
-		for(GoalsPerPeriod goals : gameData.getGoalsPerPeriod()) {
-			if(goals.getTeam().equals(TeamType.HOME.formatted())) {
-				homePeriodsScore[goals.getPeriod() - 1] = goals.getGoals();
-			} else if(goals.getTeam().equals(TeamType.AWAY.formatted())) {
-				awayPeriodsScore[goals.getPeriod() - 1] = goals.getGoals();
-			} else {
-				LogUtil.writeLog("game id: " + id + "mapping of main page games basic info has an oopsie; sql didn't find correct team type for goals per periods");
-				System.out.println("!!! oopsie has been logged");
-			}
-		}
+	public GameBaseData(int id, String gameDate, String homeTeamName, String homeTeamAbr, int homeScore,
+			String awayTeamName, String awayTeamAbr, int awayScore, String endPeriodType, int[] homePeriodsScore,
+			int[] awayPeriodsScore) {
+		this.id = id;
+		this.gameDate = gameDate;
+		this.homeTeamName = homeTeamName;
+		this.homeTeamAbr = homeTeamAbr;
+		this.homeScore = homeScore;
+		this.awayTeamName = awayTeamName;
+		this.awayTeamAbr = awayTeamAbr;
+		this.awayScore = awayScore;
+		this.endPeriodType = endPeriodType;
+		this.homePeriodsScore = homePeriodsScore;
+		this.awayPeriodsScore = awayPeriodsScore;
 	}
 
 	public int getId() {

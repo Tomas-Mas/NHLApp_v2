@@ -21,7 +21,6 @@ import com.tom.nhl.entity.Game;
 import com.tom.nhl.entity.GameEvent;
 import com.tom.nhl.entity.Roster;
 import com.tom.nhl.entity.Team;
-import com.tom.nhl.enums.TeamType;
 import com.tom.nhl.util.HibernateUtil;
 
 @Component

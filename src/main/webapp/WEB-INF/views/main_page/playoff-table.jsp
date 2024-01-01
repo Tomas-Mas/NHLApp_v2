@@ -29,12 +29,6 @@
 	<label for="playoff">Playoff</label>
 </div>
 
-<p>
-	TODO nothing to report here momentarily :(
-</p>
-
-<style>
-	p {
-		font-color: white;
-	}
-</style>
+<font color="white">
+		TODO nothing to report here momentarily :(
+</font>

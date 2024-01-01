@@ -24,6 +24,8 @@ function setClickableEvents() {
 			teamClicked(e.target);
 		} else if(e.target.className === 'seasonScope') {
 			seasonScopeBtnClicked(e.target);
+		} else if(e.target.className === 'regulationScope') {
+			regulationScopeBtnClicked(e.target);
 		}
 	}
 	
@@ -65,6 +67,12 @@ function mainTableHeaderClicked(headerRow) {
 
 function seasonScopeBtnClicked(btn) {
 	$.get("/NHL/mainpage/changeSeasonScope/" + getActiveSeason() + "/" + btn.id, (data) => {
+		document.getElementById('regulationStats').innerHTML = data;
+	})
+}
+
+function regulationScopeBtnClicked(btn) {
+	$.get("/NHL/mainpage/changeRegulationScope/" + getActiveSeason() + "/" + btn.id, (data) => {
 		document.getElementById('regulationStats').innerHTML = data;
 	})
 }

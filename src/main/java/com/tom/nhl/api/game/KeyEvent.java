@@ -2,12 +2,11 @@ package com.tom.nhl.api.game;
 
 import java.util.List;
 
-import com.tom.nhl.enums.TeamType;
+import com.tom.nhl.enums.RegulationScope;
 
 public class KeyEvent {
 
-	//private int periodNumber;
-	private TeamType actedBy;
+	private RegulationScope actedBy;
 	private String periodTime;
 	private String name;	//TODO enum
 	private String secondaryType;
@@ -19,8 +18,8 @@ public class KeyEvent {
 	private int penaltyMinutes;
 	private String penaltySeverity;
 	
-	public KeyEvent(/*int periodNumber,*/
-			TeamType actedBy,
+	public KeyEvent(
+			RegulationScope actedBy,
 			String periodTime,
 			String name,
 			String secondaryType,
@@ -40,16 +39,10 @@ public class KeyEvent {
 		this.penaltySeverity = penaltySeverity;
 	}
 	
-	/*public int getPeriodNumber() {
-		return periodNumber;
-	}
-	public void setPeriodNumber(int periodNumber) {
-		this.periodNumber = periodNumber;
-	}*/
-	public TeamType getActedBy() {
+	public RegulationScope getActedBy() {
 		return actedBy;
 	}
-	public void setActedBy(TeamType actedBy) {
+	public void setActedBy(RegulationScope actedBy) {
 		this.actedBy = actedBy;
 	}
 	public String getPeriodTime() {
