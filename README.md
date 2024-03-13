@@ -26,7 +26,7 @@ Html page is then filled by retrieved data and styled with CSS and Javascript.
 ![statspage screenshot](readme-imgs/statspage-screen.png)
 ![statspage sub navigation](readme-imgs/statspage-subnavigation-screen.png)
 - all the sub navigation including pagination of player's stats is binded to single class through form
-![statspage players pagination])readme-imgs/statspage-player-pagination-screen.png)
+![statspage players pagination](readme-imgs/statspage-player-pagination-screen.png)
 ### Game page
 TODO
 ### Player page
