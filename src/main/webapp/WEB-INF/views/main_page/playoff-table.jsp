@@ -29,6 +29,4 @@
 	<label for="playoff">Playoff</label>
 </div>
 
-<font color="white">
-		TODO nothing to report here momentarily :(
-</font>
+<jsp:include page="/WEB-INF/views/stats_page/playoff-spiders.jsp"></jsp:include>

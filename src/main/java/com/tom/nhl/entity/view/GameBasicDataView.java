@@ -15,7 +15,7 @@ import org.hibernate.annotations.Immutable;
 @Entity
 @Immutable
 @Table(name = "MainPageGameBasicData")
-public class MainPageGameBasicData {
+public class GameBasicDataView {
 
 	private int id;
 	private Date gameDate;

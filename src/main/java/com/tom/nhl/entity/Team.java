@@ -1,5 +1,7 @@
 package com.tom.nhl.entity;
 
+import java.util.Set;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -32,6 +35,9 @@ public class Team {
 	//private DivisionTeam division;
 	//private int conference;
 	private String active;
+	
+	private Set<DivisionTeam> divisions;
+	private Set<ConferenceTeam> conferences;
 	
 	@Id
 	@SequenceGenerator(name = "teamIdGenerator", sequenceName = "SEQ_TEAMS_ID", allocationSize = 1)
@@ -124,5 +130,21 @@ public class Team {
 	}
 	public void setActive(String active) {
 		this.active = active;
+	}
+	
+	@OneToMany(mappedBy = "divisionPk.team", fetch = FetchType.LAZY)
+	public Set<DivisionTeam> getDivisions() {
+		return divisions;
+	}
+	public void setDivisions(Set<DivisionTeam> divisions) {
+		this.divisions = divisions;
+	}
+	
+	@OneToMany(mappedBy = "conferencePk.team", fetch = FetchType.LAZY)
+	public Set<ConferenceTeam> getConferences() {
+		return conferences;
+	}
+	public void setConferences(Set<ConferenceTeam> conferences) {
+		this.conferences = conferences;
 	}
 }

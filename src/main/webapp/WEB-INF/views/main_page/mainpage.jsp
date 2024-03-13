@@ -10,6 +10,7 @@
 	<link rel="stylesheet" type="text/css" href="/NHL/src/css/title.css">
 	<link rel="stylesheet" type="text/css" href="/NHL/src/css/main-menu.css">
 	<link rel="stylesheet" type="text/css" href="/NHL/src/css/main-page.css">
+	<link rel="stylesheet" type="text/css" href="/NHL/src/css/playoff-spider.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 	<script src="/NHL/src/js/menu.js"></script>
 	<script src="/NHL/src/js/main-page.js"></script>

@@ -12,6 +12,7 @@ public class TeamStats {
 	private int goalsFor;
 	private int goalsAgainst;
 	private int points;
+	private int pointPercentage;
 	private int regWins;
 	private int regLoses;
 	private int otWins;
@@ -28,6 +29,7 @@ public class TeamStats {
 			int goalsFor,
 			int goalsAgainst,
 			int points,
+			int pointPercentage,
 			int regWins,
 			int regLoses,
 			int otWins,
@@ -42,6 +44,7 @@ public class TeamStats {
 		this.goalsFor = goalsFor;
 		this.goalsAgainst = goalsAgainst;
 		this.points = points;
+		this.pointPercentage = pointPercentage;
 		this.regWins = regWins;
 		this.regLoses = regLoses;
 		this.otWins = otWins;
@@ -126,6 +129,14 @@ public class TeamStats {
 
 	public void setPoints(int points) {
 		this.points = points;
+	}
+	
+	public int getPointPercentage() {
+		return pointPercentage;
+	}
+	
+	public void setPointPercentage(int pointPercentage) {
+		this.pointPercentage = pointPercentage;
 	}
 
 	public int getRegWins() {

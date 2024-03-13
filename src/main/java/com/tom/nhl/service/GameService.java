@@ -13,14 +13,11 @@ import com.tom.nhl.api.game.GameBaseData;
 import com.tom.nhl.api.game.GameEventPlayer;
 import com.tom.nhl.api.game.GamePeriodKeyEventsData;
 import com.tom.nhl.api.game.KeyEvent;
-import com.tom.nhl.api.stats.RegulationTeamStandings;
-import com.tom.nhl.api.stats.TeamStats;
 import com.tom.nhl.dao.JPAGameDAO;
 import com.tom.nhl.entity.EventPlayer;
 import com.tom.nhl.entity.GameEvent;
 import com.tom.nhl.entity.view.GoalsPerPeriod;
-import com.tom.nhl.entity.view.MainPageGameBasicData;
-import com.tom.nhl.entity.view.RegulationTeamStats;
+import com.tom.nhl.entity.view.GameBasicDataView;
 import com.tom.nhl.enums.RegulationScope;
 import com.tom.nhl.util.LogUtil;
 
@@ -29,36 +26,19 @@ public class GameService {
 
 	@Autowired
 	private JPAGameDAO gameDAO;
-	//@Autowired
-	//private GameEventDAO gameEventDAO;
-	
-	private List<Integer> seasons;
-	
-	public List<Integer> getSeasons() {
-		if(seasons == null)
-			seasons = gameDAO.getSeasons();
-		return seasons;
-	}
-	
-	public int getDefaultSeason() {
-		List<Integer> seasons = getSeasons();
-		return seasons.get(seasons.size() - 1);
-	}
-	
-	public boolean isActiveSeasonValid(int season) {
-		List<Integer> seasons = getSeasons();
-		for(int s : seasons) {
-			if(s == season)
-				return true;
-		}
-		return false;
-	}
 	
 	public List<GameBaseData> getGamesBaseData(int season) {
 		long start = System.currentTimeMillis();
-		List<GameBaseData> games = mapGameData(gameDAO.fetchGamesBasicData(season));
+		List<GameBaseData> games = mapGameData(gameDAO.fetchGamesGoalsPerPeriodData(gameDAO.fetchGamesBasicData(season)));
 		System.out.println("fancy fetching of games took: " + (System.currentTimeMillis() - start));
 		
+		return games;
+	}
+	
+	public List<GameBaseData> getPlayoffBaseData(int season) {
+		long start = System.currentTimeMillis();
+		List<GameBaseData> games = mapPlayoffBaseData(gameDAO.fetchPlayoffGamesBasicData(season));
+		System.out.println("fetching playoff game list took: " + (System.currentTimeMillis() - start));
 		return games;
 	}
 	
@@ -71,20 +51,30 @@ public class GameService {
 		return eventsPerPeriod;
 	}
 	
-	public RegulationTeamStandings getTeamStandings(int season, RegulationScope statsType) {
-		long start = System.currentTimeMillis();
-		List<RegulationTeamStats> dbStats = gameDAO.fetchTeamStandings(season);
-		RegulationTeamStandings teamStandings = mapTeamStandings(season, dbStats, statsType);
-		System.out.println("fetching of team standings took: " + (System.currentTimeMillis() - start));
-		
-		return teamStandings;
+	private List<GameBaseData> mapPlayoffBaseData(List<GameBasicDataView> games) {
+		List<GameBaseData> gameList = new ArrayList<GameBaseData>();
+		for(GameBasicDataView game : games) {
+			gameList.add(new GameBaseData(
+					game.getId(),
+					new SimpleDateFormat("dd.MM.yyyy HH:mm").format(game.getGameDate()),
+					game.getHomeTeam(),
+					game.getHomeAbr(),
+					game.getHomeScore(),
+					game.getAwayTeam(),
+					game.getAwayAbr(),
+					game.getAwayScore(),
+					game.getEndPeriodType(),
+					new int[] {},
+					new int[] {}));
+		}
+		return gameList;
 	}
 	
-	private List<GameBaseData> mapGameData(List<MainPageGameBasicData> games) {
+	private List<GameBaseData> mapGameData(List<GameBasicDataView> games) {
 		List<GameBaseData> gameList = new ArrayList<GameBaseData>();
 		int[] homePeriodScore;
 		int[] awayPeriodScore;
-		for(MainPageGameBasicData entityGame : games) {
+		for(GameBasicDataView entityGame : games) {
 			homePeriodScore = new int[entityGame.getEndPeriod()];
 			awayPeriodScore = new int[entityGame.getEndPeriod()];
 			for(GoalsPerPeriod goals : entityGame.getGoalsPerPeriod()) {
@@ -187,64 +177,5 @@ public class GameService {
 		}
 		
 		return eventsPerPeriod;
-	}
-	
-	private RegulationTeamStandings mapTeamStandings(int season, List<RegulationTeamStats> dbStats, RegulationScope statsType) {
-		ArrayList<TeamStats> teamStats = new ArrayList<TeamStats>();
-		for(RegulationTeamStats team : dbStats) {
-			if(statsType == RegulationScope.OVERALL) {
-				teamStats.add(new TeamStats(
-						team.getTeamName(),
-						team.getTeamAbbreviation(),
-						team.getId().getTeamId(),
-						team.getConference(),
-						team.getDivision(),
-						team.getId().getSeason(),
-						team.getHomeGames() + team.getAwayGames(),
-						team.getHomeGoalsFor() + team.getAwayGoalsFor(),
-						team.getHomeGoalsAgainst() + team.getAwayGoalsAgainst(),
-						team.getHomePoints() + team.getAwayPoints(),
-						team.getHomeRegWins() + team.getAwayRegWins(),
-						team.getHomeRegLoses() + team.getAwayRegLoses(),
-						team.getHomeOtWins() + team.getAwayOtWins(),
-						team.getHomeOtLoses() + team.getAwayOtLoses()
-				));
-			} else if(statsType == RegulationScope.HOME) {
-				teamStats.add(new TeamStats(
-						team.getTeamName(),
-						team.getTeamAbbreviation(),
-						team.getId().getTeamId(),
-						team.getConference(),
-						team.getDivision(),
-						team.getId().getSeason(),
-						team.getHomeGames(),
-						team.getHomeGoalsFor(),
-						team.getHomeGoalsAgainst(),
-						team.getHomePoints(),
-						team.getHomeRegWins(),
-						team.getHomeRegLoses(),
-						team.getHomeOtWins(),
-						team.getHomeOtLoses()
-				));
-			} else if(statsType == RegulationScope.AWAY) {
-				teamStats.add(new TeamStats(
-						team.getTeamName(),
-						team.getTeamAbbreviation(),
-						team.getId().getTeamId(),
-						team.getConference(),
-						team.getDivision(),
-						team.getId().getSeason(),
-						team.getAwayGames(),
-						team.getAwayGoalsFor(),
-						team.getAwayGoalsAgainst(),
-						team.getAwayPoints(),
-						team.getAwayRegWins(),
-						team.getAwayRegLoses(),
-						team.getAwayOtWins(),
-						team.getAwayOtLoses()
-				));
-			}
-		}
-		return new RegulationTeamStandings(season, teamStats);
 	}
 }

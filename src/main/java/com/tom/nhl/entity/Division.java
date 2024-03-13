@@ -1,10 +1,14 @@
 package com.tom.nhl.entity;
 
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -18,6 +22,7 @@ public class Division {
 	private int id;
 	private int jsonId;
 	private String name;
+	private Set<ConferenceDivision> conferences;
 	
 	@Id
 	@SequenceGenerator(name = "divisionIdGenerator", sequenceName = "SEQ_DIVISIONS_ID", allocationSize = 1)
@@ -45,4 +50,13 @@ public class Division {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	@OneToMany(mappedBy = "conferenceDivisionPk.division", fetch = FetchType.LAZY)
+	public Set<ConferenceDivision> getConferences() {
+		return conferences;
+	}
+	public void setConferences(Set<ConferenceDivision> conferences) {
+		this.conferences = conferences;
+	}
+	
 }

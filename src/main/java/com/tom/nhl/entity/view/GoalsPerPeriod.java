@@ -17,7 +17,7 @@ import org.hibernate.annotations.Immutable;
 public class GoalsPerPeriod {
 
 	private String id;
-	private MainPageGameBasicData game;
+	private GameBasicDataView game;
 	private String team;
 	private int period;
 	private int goals;
@@ -33,10 +33,10 @@ public class GoalsPerPeriod {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "gameId")
-	public MainPageGameBasicData getGame() {
+	public GameBasicDataView getGame() {
 		return game;
 	}
-	public void setGame(MainPageGameBasicData game) {
+	public void setGame(GameBasicDataView game) {
 		this.game = game;
 	}
 	

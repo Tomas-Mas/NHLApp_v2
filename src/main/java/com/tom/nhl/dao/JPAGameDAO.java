@@ -24,8 +24,7 @@ import com.tom.nhl.entity.EventPlayerPK;
 import com.tom.nhl.entity.Game;
 import com.tom.nhl.entity.GameEvent;
 import com.tom.nhl.entity.Roster;
-import com.tom.nhl.entity.view.MainPageGameBasicData;
-import com.tom.nhl.entity.view.RegulationTeamStats;
+import com.tom.nhl.entity.view.GameBasicDataView;
 import com.tom.nhl.util.HibernateUtil;
 
 @Component
@@ -36,18 +35,18 @@ public class JPAGameDAO implements GameDAO {
 
 	public List<Integer> getSeasons() {
 		EntityManager em = HibernateUtil.createEntityManager();
-		List<Integer> seasons = em.createQuery("select distinct g.season from Game g", Integer.class)
+		List<Integer> seasons = em.createQuery("select distinct g.season from Game g order by g.season desc", Integer.class)
 				.getResultList();
 		em.close();
 		return seasons;
 	}
 	
-	public List<MainPageGameBasicData> fetchGamesBasicData(int season) {
+	public List<GameBasicDataView> fetchGamesBasicData(int season) {
 		EntityManager em = HibernateUtil.createEntityManager();
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		
-		CriteriaQuery<MainPageGameBasicData> query = cb.createQuery(MainPageGameBasicData.class);
-		Root<MainPageGameBasicData> gameViewRoot = query.from(MainPageGameBasicData.class);
+		CriteriaQuery<GameBasicDataView> query = cb.createQuery(GameBasicDataView.class);
+		Root<GameBasicDataView> gameViewRoot = query.from(GameBasicDataView.class);
 		
 		Subquery<Integer> sqSeasonFilter = query.subquery(Integer.class);
 		Root<Game> sqGameRoot = sqSeasonFilter.from(Game.class);
@@ -57,21 +56,47 @@ public class JPAGameDAO implements GameDAO {
 		query.select(gameViewRoot)
 				.where(cb.in(gameViewRoot.get("id")).value(sqSeasonFilter))
 				.orderBy(cb.desc(gameViewRoot.get("gameDate")));
-		List<MainPageGameBasicData> gameList = em.createQuery(query)
+		List<GameBasicDataView> gameList = em.createQuery(query)
 				.setFirstResult(currentPage * pageSize)
 				.setMaxResults(pageSize)
 				.getResultList();
 		
-		CriteriaQuery<MainPageGameBasicData> finalQuery = cb.createQuery(MainPageGameBasicData.class);
-		Root<MainPageGameBasicData> gameRoot = finalQuery.from(MainPageGameBasicData.class);
+		return gameList;
+	}
+	
+	public List<GameBasicDataView> fetchGamesGoalsPerPeriodData(List<GameBasicDataView> games) {
+		EntityManager em = HibernateUtil.createEntityManager();
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		
+		CriteriaQuery<GameBasicDataView> finalQuery = cb.createQuery(GameBasicDataView.class);
+		Root<GameBasicDataView> gameRoot = finalQuery.from(GameBasicDataView.class);
 		gameRoot.fetch("goalsPerPeriod");
 		finalQuery.select(gameRoot)
 				.distinct(true)
-				.where(gameRoot.in(gameList))
+				.where(gameRoot.in(games))
 				.orderBy(cb.desc(gameRoot.get("gameDate")));
-		List<MainPageGameBasicData> games = em.createQuery(finalQuery).getResultList();
+		games = em.createQuery(finalQuery).getResultList();
 		
 		return games;
+	}
+	
+	public List<GameBasicDataView> fetchPlayoffGamesBasicData(int season) {
+		EntityManager em = HibernateUtil.createEntityManager();
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		
+		CriteriaQuery<GameBasicDataView> query = cb.createQuery(GameBasicDataView.class);
+		Root<GameBasicDataView> gameViewRoot = query.from(GameBasicDataView.class);
+		
+		Subquery<Integer> sqFilter = query.subquery(Integer.class);
+		Root<Game> sqGameRoot = sqFilter.from(Game.class);
+		sqFilter.select(sqGameRoot.<Integer>get("id"))
+				.where(cb.and(cb.equal(sqGameRoot.get("season"), season), cb.equal(sqGameRoot.get("gameType"), "P")));
+		
+		query.select(gameViewRoot)
+				.where(cb.in(gameViewRoot.get("id")).value(sqFilter))
+				.orderBy(cb.asc(gameViewRoot.get("gameDate")));
+		List<GameBasicDataView> playoffGames = em.createQuery(query).getResultList();
+		return playoffGames;
 	}
 	
 	public List<GameEvent> fetchGamesKeyEvents(int id) {
@@ -111,35 +136,21 @@ public class JPAGameDAO implements GameDAO {
 		return events;
 	}
 	
-	public List<RegulationTeamStats> fetchTeamStandings(int season) {
-		EntityManager em = HibernateUtil.createEntityManager();
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		
-		CriteriaQuery<RegulationTeamStats> query = cb.createQuery(RegulationTeamStats.class);
-		Root<RegulationTeamStats> teamStatsRoot = query.from(RegulationTeamStats.class);
-		
-		Predicate seasonPredicate = cb.equal(teamStatsRoot.get("id").get("season"), season);
-		
-		query.select(teamStatsRoot)
-				.where(seasonPredicate);
-		
-		List<RegulationTeamStats> stats = em.createQuery(query)
-				.getResultList();
-		
-		for(RegulationTeamStats s : stats) {
-			em.detach(s);
-		}
-		
-		return stats;
+	private List<String> getKeyEventFilter() {
+		List<String> filter = new ArrayList<String>();
+		filter.add("Goal");
+		filter.add("Penalty");
+		return filter;
 	}
 	
 	////////////////////////////////////////////////////////
 	
 	/*
-	 * well, Fetch objects cant access attributes, so they are useless for conditions for m:n and 1:n relationships
+	 * well, Fetch objects cant access attributes, so they are useless for conditions for m:n and 1:n relations
 	 * fetchGraphs and subgraphs can replace fetch objects, so Join object can be used instead to access attributes but
 	 * it doesn't work for embedded ids, so I guess only way around it is to break complex queries to multiple ones or views
 	 */
+	@Deprecated
 	public void test(int season) {
 		EntityManager em = HibernateUtil.createEntityManager();
 		CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -227,12 +238,8 @@ public class JPAGameDAO implements GameDAO {
 		
 		return games;
 	}
-	private List<String> getKeyEventFilter() {
-		List<String> filter = new ArrayList<String>();
-		filter.add("Goal");
-		filter.add("Penalty");
-		return filter;
-	}
+	
+	@Deprecated
 	private List<GameEvent> fetchKeyEvents(Game game) {
 		EntityManager em = HibernateUtil.createEntityManager();
 		CriteriaBuilder cb = em.getCriteriaBuilder();

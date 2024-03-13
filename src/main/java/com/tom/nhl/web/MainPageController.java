@@ -15,20 +15,24 @@ import org.springframework.web.servlet.ModelAndView;
 import com.tom.nhl.enums.SeasonScope;
 import com.tom.nhl.enums.RegulationScope;
 import com.tom.nhl.service.GameService;
+import com.tom.nhl.service.SeasonService;
+import com.tom.nhl.service.StatsService;
 
 @Controller
 @RequestMapping("/mainpage")
 public class MainPageController {
 	
-	//@Autowired
-	//private TestSeasonService seasonService;
+	@Autowired
+	private SeasonService seasonService;
 	@Autowired
 	private GameService gameService;
+	@Autowired
+	private StatsService statsService;
 	
 	@RequestMapping("")
 	public String processSeasonlessUrl(@CookieValue(value = "season", defaultValue = "0") Integer season, HttpServletResponse response) {
 		if(season == 0) {
-			season = gameService.getDefaultSeason();
+			season = seasonService.getDefaultSeason();
 			addCookie("season", String.valueOf(season), response);
 		}
 		return "redirect:/mainpage/" + season;
@@ -36,14 +40,20 @@ public class MainPageController {
 	
 	@RequestMapping("/{season}")
 	public String loadPage(@PathVariable int season, @CookieValue(value = "season", defaultValue = "0") Integer seasonCookie, Model model, HttpServletResponse response) {
+		if(!seasonService.isValidSeason(season)) {
+			//TODO non-existing season
+			System.out.println("season does not exist in db");
+		}
+			
 		if(season != seasonCookie) {
 			addCookie("season", String.valueOf(season), response);
 		}
-		model.addAttribute("seasons", gameService.getSeasons());
+		
+		model.addAttribute("seasons", seasonService.getSeasons());
 		model.addAttribute("selectedSeason", season);
 		
 		model.addAttribute("games", gameService.getGamesBaseData(season));
-		model.addAttribute("standings", gameService.getTeamStandings(season, RegulationScope.OVERALL));
+		model.addAttribute("standings", statsService.getRegulationTeamStandings(season, RegulationScope.OVERALL));
 		model.addAttribute("regulationScope", RegulationScope.OVERALL);
 		model.addAttribute("seasonScope", SeasonScope.REGULATION);
 		
@@ -57,9 +67,12 @@ public class MainPageController {
 		model.addObject("seasonScope", scope);
 		
 		if(scope == SeasonScope.PLAYOFF) {
+			model.addObject("playoff", statsService.getPlayoffSpider(
+					statsService.getRegulationTeamStandings(season, RegulationScope.OVERALL), 
+					gameService.getPlayoffBaseData(season)));
 			model.setViewName("main_page/playoff-table");
 		} else {
-			model.addObject("standings", gameService.getTeamStandings(season, RegulationScope.OVERALL));
+			model.addObject("standings", statsService.getRegulationTeamStandings(season, RegulationScope.OVERALL));
 			model.addObject("regulationScope", RegulationScope.OVERALL);
 			model.setViewName("main_page/regulation-table");
 		}
@@ -72,7 +85,7 @@ public class MainPageController {
 		RegulationScope scope = RegulationScope.valueOfType(regulationScope);
 		model.addObject("seasonScope", SeasonScope.REGULATION);
 		model.addObject("regulationScope", scope);
-		model.addObject("standings", gameService.getTeamStandings(season, scope));
+		model.addObject("standings", statsService.getRegulationTeamStandings(season, scope));
 		model.setViewName("main_page/regulation-table");
 		return model;
 	}

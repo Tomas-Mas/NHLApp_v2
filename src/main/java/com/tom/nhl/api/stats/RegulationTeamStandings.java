@@ -1,11 +1,12 @@
 package com.tom.nhl.api.stats;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import com.tom.nhl.util.LogUtil;
+import java.util.Set;
+
+import com.tom.nhl.util.Tiebreakers;
 
 public class RegulationTeamStandings {
 
@@ -35,7 +36,7 @@ public class RegulationTeamStandings {
 				teamsByConference.add(team);
 			}
 		}
-		return tiebreakerSort(teamsByConference);
+		return Tiebreakers.tiebreakerSort(teamsByConference);
 	}
 	
 	public ArrayList<TeamStats> getTeamsByDivision(String division) {
@@ -45,48 +46,7 @@ public class RegulationTeamStandings {
 				teamsByDivision.add(team);
 			}
 		}
-		return tiebreakerSort(teamsByDivision);
-	}
-	
-	private ArrayList<TeamStats> tiebreakerSort(ArrayList<TeamStats> teams) {
-		teams.sort(new Comparator<TeamStats>() {
-			
-			public int compare(TeamStats t1, TeamStats t2) {
-				//points
-				int res = Integer.valueOf(t2.getPoints()).compareTo(t1.getPoints());
-				if(res != 0) return res;
-				//games played
-				res = Integer.valueOf(t2.getGames()).compareTo(t1.getGames());
-				if(res != 0) return res;
-				//regulation wins
-				res = Integer.valueOf(t2.getRegWins()).compareTo(t1.getRegWins());
-				if(res != 0) return res;
-				//Ot wins
-				res = Integer.valueOf(t2.getOtWins()).compareTo(t1.getOtWins());
-				if(res != 0) return res;
-				//total wins
-				res = Integer.valueOf(t2.getRegWins() + t2.getOtWins()).compareTo(t1.getRegWins() + t1.getOtWins());
-				if(res != 0) return res;
-				
-				LogUtil.writeLog(season + " Unresolved tiebreakers between teams: " + t1.getTeamName() + " - " + t2.getTeamName());
-				// TODO from nhl.com about tiebreakers
-				/*
-				The greater number of points earned in games against each other among two or more tied clubs. 
-				For the purpose of determining standing for two or more Clubs that have not played an even number of games 
-				with one or more of the other tied Clubs, the first game played in the city that has the extra game (the "odd game") 
-				shall not be included. When more than two Clubs are tied, the percentage of available points earned in games among each other 
-				(and not including any "odd games") shall be used to determine standing.
-				*/
-				
-				//goal difference
-				res = Integer.valueOf(t2.getGoalsFor() - t2.getGoalsAgainst()).compareTo(t1.getGoalsFor() - t2.getGoalsAgainst());
-				if(res != 0) return res;
-				//scored goals
-				res = Integer.valueOf(t2.getGoalsFor()).compareTo(t1.getGoalsFor());
-				return res;
-			}
-		});
-		return teams;
+		return Tiebreakers.tiebreakerSort(teamsByDivision);
 	}
 	
 	public int getSeason() {
@@ -107,6 +67,45 @@ public class RegulationTeamStandings {
 	
 	public HashMap<String,ArrayList<String>> getConfDiv() {
 		return confDiv;
+	}
+	
+	public Set<String> getConferences() {
+		return confDiv.keySet();
+	}
+	
+	public ArrayList<String> getDivisions() {
+		ArrayList<String> divisions = new ArrayList<String>();
+		for(String conf : confDiv.keySet()) {
+			divisions.addAll(confDiv.get(conf));
+		}
+		return divisions;
+	}
+	
+	public List<TeamStats> getDivisionWinners(String conference) {
+		ArrayList<TeamStats> divWinners = new ArrayList<TeamStats>();
+		for(String division : confDiv.get(conference)) {
+			divWinners.add(getTeamsByDivision(division).get(0));
+		}
+		return Tiebreakers.tiebreakerSort(divWinners);
+	}
+	
+	public List<TeamStats> getDivisionRunnerUps(String division) {
+		List<TeamStats> divRunnerUps = new ArrayList<TeamStats>();
+		List<TeamStats> divTeams = getTeamsByDivision(division);
+		divRunnerUps.add(divTeams.get(1));
+		divRunnerUps.add(divTeams.get(2));
+		return divRunnerUps;
+	}
+	
+	public List<TeamStats> getConferenceWildCards(String conference) {
+		ArrayList<TeamStats> wildCards = new ArrayList<TeamStats>();
+		List<TeamStats> divTeams;
+		for(String division : confDiv.get(conference)) {
+			divTeams = getTeamsByDivision(division);
+			wildCards.add(divTeams.get(3));
+			wildCards.add(divTeams.get(4));
+		}
+		return Tiebreakers.tiebreakerSort(wildCards);
 	}
 	
 	public Map<String, List<TeamStats>> getConferenceTeamMap() {

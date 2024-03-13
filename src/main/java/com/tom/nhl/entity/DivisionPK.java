@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import javax.persistence.Basic;
 import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
@@ -16,7 +17,7 @@ public class DivisionPK implements Serializable {
 	private Team team;
 	private int season;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "division_id")
 	public Division getDivision() {
 		return division;
@@ -25,7 +26,7 @@ public class DivisionPK implements Serializable {
 		this.division = division;
 	}
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "team_id")
 	public Team getTeam() {
 		return team;

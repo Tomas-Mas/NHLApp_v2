@@ -1,13 +1,17 @@
 package com.tom.nhl.enums;
 
+/** Regulation / playoff */
 public enum SeasonScope {
-	REGULATION("Regulation"),
-	PLAYOFF("Playoff");
+	REGULATION("Regulation", "R"),
+	PLAYOFF("Playoff", "P"),
+	DEFAULT("Default", "N/A");
 	
 	private String type;
+	private String value;
 	
-	private SeasonScope(String type) {
+	private SeasonScope(String type, String value) {
 		this.type = type;
+		this.value = value;
 	}
 	
 	public static SeasonScope valueOfType(String type) {
@@ -17,10 +21,18 @@ public enum SeasonScope {
 				return s;
 			}
 		}
-		return null;
+		return SeasonScope.DEFAULT;
 	}
 	
 	public String getType() {
 		return type;
+	}
+	
+	public String getValue() {
+		return value;
+	}
+	
+	public String formatted() {
+		return type.substring(0, 1).toUpperCase() + type.substring(1).toLowerCase();
 	}
 }

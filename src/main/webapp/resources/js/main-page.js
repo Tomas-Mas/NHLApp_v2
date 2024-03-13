@@ -1,3 +1,5 @@
+var expandedElement = null;
+
 document.onreadystatechange = function() {
 	if(document.readyState === 'complete') {
 		setClickableEvents();
@@ -6,6 +8,9 @@ document.onreadystatechange = function() {
 
 function setClickableEvents() {
 	document.getElementById('mainMenu').onclick = menuClicked;
+	document.querySelector('select#season').addEventListener('change', function() {
+		window.location.replace('/NHL/mainpage/' + getActiveSeason());
+	})
 	
 	document.getElementById('mainFinishedTableRegulation').onclick = function(e) {
 		if(e.target.className === 'gameDetailPlayerName') {
@@ -26,6 +31,8 @@ function setClickableEvents() {
 			seasonScopeBtnClicked(e.target);
 		} else if(e.target.className === 'regulationScope') {
 			regulationScopeBtnClicked(e.target);
+		} else if(e.target.closest('div').className === 'match-header') {
+			playoffClicked(e);
 		}
 	}
 	
@@ -34,18 +41,18 @@ function setClickableEvents() {
 
 function playerClicked(target) {
 	var playerId = target.id;
-	window.location.href = 'player.jsp?id=' + playerId;
+	//window.location.href = 'player.jsp?id=' + playerId;
 }
 
 function teamClicked(target) {
 	var teamId = target.id;
-	alert(teamId);
+	//alert(teamId);
 	//window.location.href = 'team.jsp?id=' + teamId;
 }
 
 function gamePageButtonClicked(target) {
 	var gameId = target.id;
-	window.location.href = 'game.jsp?id=' + gameId;
+	//window.location.href = 'game.jsp?id=' + gameId;
 }
 
 function mainTableHeaderClicked(headerRow) {
@@ -68,19 +75,42 @@ function mainTableHeaderClicked(headerRow) {
 function seasonScopeBtnClicked(btn) {
 	$.get("/NHL/mainpage/changeSeasonScope/" + getActiveSeason() + "/" + btn.id, (data) => {
 		document.getElementById('regulationStats').innerHTML = data;
-	})
+	});
 }
 
 function regulationScopeBtnClicked(btn) {
 	$.get("/NHL/mainpage/changeRegulationScope/" + getActiveSeason() + "/" + btn.id, (data) => {
 		document.getElementById('regulationStats').innerHTML = data;
-	})
+	});
 }
 
-function getActiveSeason() {
-	let index = document.getElementById("season").selectedIndex;
-	let season = document.getElementById("season")[index].text;
-	return season;
+function playoffClicked(event) {
+	var clickedDiv = event.target.closest('div');
+	if(clickedDiv.className === 'match-header') {
+		var results = clickedDiv.nextElementSibling;
+		if(results.style.display === 'none') {
+			unexpandBrackets();
+			results.style.display = 'block';
+			clickedDiv.parentElement.classList.add('expanded');
+			expandedElement = clickedDiv;
+		} else {
+			results.style.display = 'none';
+			clickedDiv.parentElement.classList.remove('expanded');
+		}
+	} else if(clickedDiv.className === 'match-results') {
+		alert(event.target.closest('tr').id);
+		//todo go to match page
+	} else {
+		unexpandBrackets();
+	}
+}
+
+function unexpandBrackets() {
+	if(expandedElement != null) {
+		expandedElement.parentElement.classList.remove('expanded');
+		expandedElement.nextElementSibling.style.display = 'none';
+		expandedElement = null;
+	}
 }
 
 function getIdFromElement(element, prefix, idPrefix) {
