@@ -19,9 +19,14 @@ Html page is then filled by retrieved data and styled with CSS and Javascript.
 
 ### Main page
 ![mainpage screenshot](readme-imgs/main-page-screen.png)
--half done
+- sub-navigation (regulation/playoff and overall/home/away data) requests are handled by javascript, then whole stats container is overwritten by controller's response
+![mainpage game detail screenshot](readme-imgs/mainpage-game-detail-screen.png)
+- game details are loaded on click on game row by javascript into data row
 ### Stats page
-TODO
+![statspage screenshot](readme-imgs/statspage-screen.png)
+![statspage sub navigation](readme-imgs/statspage-subnavigation-screen.png)
+- all the sub navigation including pagination of player's stats is binded to single class through form
+![statspage players pagination])readme-imgs/statspage-player-pagination-screen.png)
 ### Game page
 TODO
 ### Player page
