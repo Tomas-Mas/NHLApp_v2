@@ -19,7 +19,7 @@
 	<select id='season' name='season'>
 		<c:forEach items="${seasons}" var="s">
 			<c:choose>
-				<c:when test="${s == season}"> <option selected> ${s} </option>	</c:when>
+				<c:when test="${s == selectedSeason}"> <option selected> ${s} </option>	</c:when>
 				<c:otherwise> <option> ${s} </option> </c:otherwise>
 			</c:choose>
 			

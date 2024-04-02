@@ -19,6 +19,7 @@ import com.tom.nhl.entity.GameEvent;
 import com.tom.nhl.entity.view.GoalsPerPeriod;
 import com.tom.nhl.entity.view.GameBasicDataView;
 import com.tom.nhl.enums.RegulationScope;
+import com.tom.nhl.enums.SeasonScope;
 import com.tom.nhl.util.LogUtil;
 
 @Component
@@ -27,39 +28,71 @@ public class GameService {
 	@Autowired
 	private JPAGameDAO gameDAO;
 	
-	public List<GameBaseData> getGamesBaseData(int season) {
+	public List<GameBaseData> getGamesBaseDataBySeason(int season) {
 		long start = System.currentTimeMillis();
-		List<GameBaseData> games = mapGameData(gameDAO.fetchGamesGoalsPerPeriodData(gameDAO.fetchGamesBasicData(season)));
+		List<GameBaseData> games = mapGameData(gameDAO.fetchGamesGoalsPerPeriodData(gameDAO.fetchGamesBasicDataBySeason(season)));
 		System.out.println("fancy fetching of games took: " + (System.currentTimeMillis() - start));
 		
 		return games;
 	}
 	
+	public GameBaseData getGameBaseDataById(int gameId) {
+		long start = System.currentTimeMillis();
+		GameBaseData game = mapGameData(gameDAO.fetchGameBasicDataById(gameId));
+		System.out.println("fetching of base game data took: " + (System.currentTimeMillis() - start));
+		
+		return game;
+	}
+	
+	public Map<String, List<GameBaseData>> getHeadToHeadMapByTeams(int gameId, int team1Id, int team2Id) {
+		long start = System.currentTimeMillis();
+		Map<String, List<GameBaseData>> gameMap = new HashMap<String, List<GameBaseData>>();
+		List<GameBaseData> regulationGames = new ArrayList<GameBaseData>();
+		List<GameBaseData> playoffGames = new ArrayList<GameBaseData>();
+		
+		List<GameBaseData> games = mapGamesData(gameDAO.fetchGamesBasicDataByTeams(gameId, team1Id, team2Id));
+		for(GameBaseData g : games) {
+			if(g.getGameType() == SeasonScope.REGULATION) {
+				regulationGames.add(g);
+			} else if(g.getGameType() == SeasonScope.PLAYOFF) {
+				playoffGames.add(g);
+			}
+		}
+		gameMap.put("Regulation", regulationGames);
+		gameMap.put("Playoff", playoffGames);
+		System.out.println("fetching of games data for given teams took: " + (System.currentTimeMillis() - start));
+		return gameMap;
+	}
+	
 	public List<GameBaseData> getPlayoffBaseData(int season) {
 		long start = System.currentTimeMillis();
-		List<GameBaseData> games = mapPlayoffBaseData(gameDAO.fetchPlayoffGamesBasicData(season));
+		List<GameBaseData> games = mapGamesData(gameDAO.fetchPlayoffGamesBasicDataBySeason(season));
 		System.out.println("fetching playoff game list took: " + (System.currentTimeMillis() - start));
 		return games;
 	}
 	
 	public List<GamePeriodKeyEventsData> getGameKeyEventsData(int gameId) {
 		long start = System.currentTimeMillis();
-		List<GameEvent> events = gameDAO.fetchGamesKeyEvents(gameId);
+		List<GameEvent> events = gameDAO.fetchGamesKeyEventsById(gameId);
 		List<GamePeriodKeyEventsData> eventsPerPeriod = mapGameEvents(events);
 		System.out.println("fancy fetching of events took: " + (System.currentTimeMillis() - start));
 		
 		return eventsPerPeriod;
 	}
 	
-	private List<GameBaseData> mapPlayoffBaseData(List<GameBasicDataView> games) {
+	private List<GameBaseData> mapGamesData(List<GameBasicDataView> games) {
 		List<GameBaseData> gameList = new ArrayList<GameBaseData>();
 		for(GameBasicDataView game : games) {
 			gameList.add(new GameBaseData(
 					game.getId(),
 					new SimpleDateFormat("dd.MM.yyyy HH:mm").format(game.getGameDate()),
+					SeasonScope.valueOfValue(game.getGameType()),
+					game.getGameStatus(),
+					game.getHomeId(),
 					game.getHomeTeam(),
 					game.getHomeAbr(),
 					game.getHomeScore(),
+					game.getAwayId(),
 					game.getAwayTeam(),
 					game.getAwayAbr(),
 					game.getAwayScore(),
@@ -68,6 +101,26 @@ public class GameService {
 					new int[] {}));
 		}
 		return gameList;
+	}
+	
+	private GameBaseData mapGameData(GameBasicDataView game) {
+		return new GameBaseData(
+				game.getId(),
+				new SimpleDateFormat("dd.MM.yyyy HH:mm").format(game.getGameDate()),
+				SeasonScope.valueOfValue(game.getGameType()),
+				game.getGameStatus(),
+				game.getHomeId(),
+				game.getHomeTeam(),
+				game.getHomeAbr(),
+				game.getHomeScore(),
+				game.getAwayId(),
+				game.getAwayTeam(),
+				game.getAwayAbr(),
+				game.getAwayScore(),
+				game.getEndPeriodType(),
+				new int[] {},
+				new int[] {}
+				);
 	}
 	
 	private List<GameBaseData> mapGameData(List<GameBasicDataView> games) {
@@ -91,9 +144,13 @@ public class GameService {
 			gameList.add(new GameBaseData(
 					entityGame.getId(),
 					new SimpleDateFormat("dd.MM.yyyy HH:mm").format(entityGame.getGameDate()),
+					SeasonScope.valueOfValue(entityGame.getGameType()),
+					entityGame.getGameStatus(),
+					entityGame.getHomeId(),
 					entityGame.getHomeTeam(),
 					entityGame.getHomeAbr(),
 					entityGame.getHomeScore(),
+					entityGame.getAwayId(),
 					entityGame.getAwayTeam(),
 					entityGame.getAwayAbr(),
 					entityGame.getAwayScore(),

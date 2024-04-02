@@ -7,9 +7,12 @@ import com.tom.nhl.entity.view.GameBasicDataView;
 
 public interface GameDAO {
 
-	public List<Integer> getSeasons();
-	public List<GameBasicDataView> fetchGamesBasicData(int season);
+	public List<Integer> fetchSeasons();
+	public int fetchSeasonByGameId(int gameId);
+	public List<GameBasicDataView> fetchGamesBasicDataBySeason(int season);
+	public GameBasicDataView fetchGameBasicDataById(int gameId);
+	public List<GameBasicDataView> fetchGamesBasicDataByTeams(int gameId, int team1Id, int team2Id);
 	public List<GameBasicDataView> fetchGamesGoalsPerPeriodData(List<GameBasicDataView> games);
-	public List<GameBasicDataView> fetchPlayoffGamesBasicData(int season);
-	public List<GameEvent> fetchGamesKeyEvents(int id);
+	public List<GameBasicDataView> fetchPlayoffGamesBasicDataBySeason(int season);
+	public List<GameEvent> fetchGamesKeyEventsById(int id);
 }

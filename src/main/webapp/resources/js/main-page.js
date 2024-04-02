@@ -52,7 +52,7 @@ function teamClicked(target) {
 
 function gamePageButtonClicked(target) {
 	var gameId = target.id;
-	//window.location.href = 'game.jsp?id=' + gameId;
+	window.location.href = '/NHL/game/' + gameId;
 }
 
 function mainTableHeaderClicked(headerRow) {

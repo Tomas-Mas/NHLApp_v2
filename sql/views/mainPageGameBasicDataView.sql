@@ -1,10 +1,11 @@
 create or replace view MainPageGameBasicData
 as
-select g.g_id, g.gameDate, homeT.name as homeTeam, homeT.abbreviation as homeAbr, g.homeScore as homeScore, 
-        awayT.name as awayTeam, awayT.abbreviation as awayAbr, g.awayScore as awayScore, endPeriod.periodNum, periodType.periodType
+select g.g_id, g.gameDate, g.gameType, gs.name as gameStatus, homeT.t_id as homeId, homeT.name as homeTeam, homeT.abbreviation as homeAbr, g.homeScore as homeScore, 
+        awayT.t_id as awayId, awayT.name as awayTeam, awayT.abbreviation as awayAbr, g.awayScore as awayScore, endPeriod.periodNum, periodType.periodType
 from Games g
     inner join Teams homeT on g.homeTeamId = homeT.t_id
     inner join Teams awayT on g.awayTeamId = awayT.t_id
+    inner join GameStatus gs on g.gameStatus = gs.code
     left join (
         select distinct g.g_id as gameId, ge.periodType as periodType
         from Games g 

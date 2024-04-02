@@ -1,12 +1,18 @@
 package com.tom.nhl.api.game;
 
+import com.tom.nhl.enums.SeasonScope;
+
 public class GameBaseData {
 
 	private int id;
 	private String gameDate;
+	private SeasonScope gameType;
+	private String gameStatus;
+	private int homeTeamId;
 	private String homeTeamName;
 	private String homeTeamAbr;
 	private int homeScore;
+	private int awayTeamId;
 	private String awayTeamName;
 	private String awayTeamAbr;
 	private int awayScore;
@@ -14,14 +20,18 @@ public class GameBaseData {
 	private int[] homePeriodsScore;
 	private int[] awayPeriodsScore;
 	
-	public GameBaseData(int id, String gameDate, String homeTeamName, String homeTeamAbr, int homeScore,
-			String awayTeamName, String awayTeamAbr, int awayScore, String endPeriodType, int[] homePeriodsScore,
+	public GameBaseData(int id, String gameDate, SeasonScope gameType, String gameStatus, int homeTeamId, String homeTeamName, String homeTeamAbr, int homeScore,
+			int awayTeamId, String awayTeamName, String awayTeamAbr, int awayScore, String endPeriodType, int[] homePeriodsScore,
 			int[] awayPeriodsScore) {
 		this.id = id;
 		this.gameDate = gameDate;
+		this.gameType = gameType;
+		this.gameStatus = gameStatus;
+		this.homeTeamId = homeTeamId;
 		this.homeTeamName = homeTeamName;
 		this.homeTeamAbr = homeTeamAbr;
 		this.homeScore = homeScore;
+		this.awayTeamId = awayTeamId;
 		this.awayTeamName = awayTeamName;
 		this.awayTeamAbr = awayTeamAbr;
 		this.awayScore = awayScore;
@@ -44,6 +54,30 @@ public class GameBaseData {
 
 	public void setGameDate(String gameDate) {
 		this.gameDate = gameDate;
+	}
+	
+	public SeasonScope getGameType() {
+		return gameType;
+	}
+	
+	public void setGameType(SeasonScope gameType) {
+		this.gameType = gameType;
+	}
+	
+	public String getGameStatus() {
+		return gameStatus;
+	}
+	
+	public void setGameStatus(String gameStatus) {
+		this.gameStatus = gameStatus;
+	}
+	
+	public int getHomeTeamId() {
+		return homeTeamId;
+	}
+	
+	public void setHomeTeamId(int homeTeamId) {
+		this.homeTeamId = homeTeamId;
 	}
 
 	public String getHomeTeamName() {
@@ -68,6 +102,14 @@ public class GameBaseData {
 
 	public void setHomeScore(int homeScore) {
 		this.homeScore = homeScore;
+	}
+	
+	public int getAwayTeamId() {
+		return awayTeamId;
+	}
+	
+	public void setAwayTeamId(int awayTeamId) {
+		this.awayTeamId = awayTeamId;
 	}
 
 	public String getAwayTeamName() {

@@ -19,9 +19,13 @@ public class GameBasicDataView {
 
 	private int id;
 	private Date gameDate;
+	private String gameType;
+	private String gameStatus;
+	private int homeId;
 	private String homeTeam;
 	private String homeAbr;
 	private int homeScore;
+	private int awayId;
 	private String awayTeam;
 	private String awayAbr;
 	private int awayScore;
@@ -47,6 +51,30 @@ public class GameBasicDataView {
 		this.gameDate = gameDate;
 	}
 	
+	@Column(name = "gameType")
+	public String getGameType() {
+		return gameType;
+	}
+	public void setGameType(String gameType) {
+		this.gameType = gameType;
+	}
+	
+	@Column(name = "gameStatus")
+	public String getGameStatus() {
+		return gameStatus;
+	}
+	public void setGameStatus(String gameStatus) {
+		this.gameStatus = gameStatus;
+	}
+	
+	@Column(name = "homeId")
+	public int getHomeId() {
+		return homeId;
+	}
+	public void setHomeId(int homeId) {
+		this.homeId = homeId;
+	}
+	
 	@Column(name = "homeTeam")
 	public String getHomeTeam() {
 		return homeTeam;
@@ -69,6 +97,14 @@ public class GameBasicDataView {
 	}
 	public void setHomeScore(int homeScore) {
 		this.homeScore = homeScore;
+	}
+	
+	@Column(name = "awayId")
+	public int getAwayId() {
+		return awayId;
+	}
+	public void setAwayId(int awayId) {
+		this.awayId = awayId;
 	}
 	
 	@Column(name = "awayTeam")

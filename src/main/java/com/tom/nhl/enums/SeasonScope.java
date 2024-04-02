@@ -24,6 +24,16 @@ public enum SeasonScope {
 		return SeasonScope.DEFAULT;
 	}
 	
+	public static SeasonScope valueOfValue(String value) {
+		value = value.toUpperCase();
+		for(SeasonScope s : values()) {
+			if(s.value.equals(value)) {
+				return s;
+			}
+		}
+		return SeasonScope.DEFAULT;
+	}
+	
 	public String getType() {
 		return type;
 	}

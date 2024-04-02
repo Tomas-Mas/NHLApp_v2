@@ -52,7 +52,7 @@ public class MainPageController {
 		model.addAttribute("seasons", seasonService.getSeasons());
 		model.addAttribute("selectedSeason", season);
 		
-		model.addAttribute("games", gameService.getGamesBaseData(season));
+		model.addAttribute("games", gameService.getGamesBaseDataBySeason(season));
 		model.addAttribute("standings", statsService.getRegulationTeamStandings(season, RegulationScope.OVERALL));
 		model.addAttribute("regulationScope", RegulationScope.OVERALL);
 		model.addAttribute("seasonScope", SeasonScope.REGULATION);
