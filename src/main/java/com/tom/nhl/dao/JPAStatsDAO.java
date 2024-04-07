@@ -12,9 +12,11 @@ import javax.persistence.criteria.Root;
 
 import org.springframework.stereotype.Component;
 
+import com.tom.nhl.api.stats.GameStats;
 import com.tom.nhl.api.stats.SkaterStats;
 import com.tom.nhl.dto.StatsNavigationDTO;
 import com.tom.nhl.entity.Player;
+import com.tom.nhl.entity.view.GameStatsView;
 import com.tom.nhl.entity.view.RegulationTeamStats;
 import com.tom.nhl.entity.view.SkaterStatsPerGame;
 import com.tom.nhl.enums.RegulationScope;
@@ -42,6 +44,55 @@ public class JPAStatsDAO implements StatsDAO{
 		for(RegulationTeamStats s : stats) {
 			em.detach(s);
 		}
+		
+		return stats;
+	}
+	
+	public List<GameStats> fetchGameStatsById(int gameId, int periodNum) {
+		EntityManager em = HibernateUtil.createEntityManager();
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		
+		CriteriaQuery<GameStats> query = cb.createQuery(GameStats.class);
+		Root<GameStatsView> statsRoot = query.from(GameStatsView.class);
+		
+		//group by expression
+		Expression<String> groupByExp = statsRoot.get("id").get("team");
+		
+		//aggregate expressions
+		List<Expression<?>> aggregateExp = new ArrayList<Expression<?>>();
+		aggregateExp.add(cb.sum(statsRoot.<Integer>get("faceoffs")));
+		aggregateExp.add(cb.sum(statsRoot.<Integer>get("penalties")));
+		aggregateExp.add(cb.sum(statsRoot.<Integer>get("penaltyMinutes")));
+		aggregateExp.add(cb.sum(statsRoot.<Integer>get("giveaways")));
+		aggregateExp.add(cb.sum(statsRoot.<Integer>get("takeaways")));
+		aggregateExp.add(cb.sum(statsRoot.<Integer>get("hits")));
+		aggregateExp.add(cb.sum(statsRoot.<Integer>get("shots")));
+		aggregateExp.add(cb.sum(statsRoot.<Integer>get("shotsOnGoal")));
+		aggregateExp.add(cb.sum(statsRoot.<Integer>get("blockedShots")));
+		aggregateExp.add(cb.sum(statsRoot.<Integer>get("missedShots")));
+		aggregateExp.add(cb.sum(statsRoot.<Integer>get("goals")));
+		aggregateExp.add(cb.sum(statsRoot.<Integer>get("ppGoals")));
+		
+		//select expression
+		List<Expression<?>> selectExp = new ArrayList<Expression<?>>();
+		selectExp.add(groupByExp);
+		selectExp.addAll(aggregateExp);
+		
+		//predicates
+		Predicate predicate = null;
+		Predicate gamePredicate = cb.equal(statsRoot.get("id").get("gameId"), gameId);
+		if(periodNum == 0) {
+			predicate = gamePredicate;
+		} else {
+			Predicate periodPredicate = cb.equal(statsRoot.get("id").get("periodNumber"), periodNum);
+			predicate = cb.and(gamePredicate, periodPredicate);
+		}
+		
+		query.groupBy(groupByExp)
+				.select(cb.construct(GameStats.class, selectExp.toArray(new Expression<?>[] {} )))
+				.where(predicate);
+		
+		List<GameStats> stats = em.createQuery(query).getResultList();
 		
 		return stats;
 	}

@@ -80,6 +80,13 @@ public class GameService {
 		return eventsPerPeriod;
 	}
 	
+	public List<String> getPeriodTypesByGame(int gameId) {
+		long start = System.currentTimeMillis();
+		List<String> periods = gameDAO.fetchPeriodTypesByGame(gameId);
+		System.out.println("fancy fetching of period types took: " + (System.currentTimeMillis() - start));
+		return periods;
+	}
+	
 	private List<GameBaseData> mapGamesData(List<GameBasicDataView> games) {
 		List<GameBaseData> gameList = new ArrayList<GameBaseData>();
 		for(GameBasicDataView game : games) {

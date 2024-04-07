@@ -1,0 +1,67 @@
+.h2h-label {
+	padding-left: 10px;
+	font-size: 16px;
+	margin-bottom: 5px;
+	color: var(--contentMainTableRowLine);
+}
+
+.h2h-list {
+	background-color: var(--contentMainTableBackground);
+	margin-bottom: 10px;
+}
+
+.h2h-list .selected {
+	border: 3px solid var(--contentMainTableRowLine);
+}
+
+.h2h-game:hover {
+	cursor: pointer;
+	background-color: var(--contentMainTableRowHover);
+}
+
+.h2h-game {
+	display: flex;
+	/*margin-top: 3px;
+	margin-bottom: 3px;*/
+	border-bottom: 1px solid var(--contentMainTableRowLine);
+}
+.h2h-game .h2h-team-info {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+}
+.h2h-game .h2h-result {
+	flex: 2;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.h2h-team-info .h2h-team-pic {
+	flex: 2;
+	display: flex;
+	justify-content: center;
+}
+.h2h-team-pic img{
+	width: 45px;
+	height: 45px;
+}
+.h2h-team-info .h2h-team-name {
+	flex: 1;
+	display: flex;
+	justify-content: center;
+}
+
+.h2h-result .h2h-game-date {
+	flex: 1;
+	font-size: 11px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.h2h-result .h2h-score {
+	flex: 2;
+	font-size: 26px;
+	display: flex;
+	justify-content: center;
+}

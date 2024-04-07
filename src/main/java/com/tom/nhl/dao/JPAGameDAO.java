@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.Subgraph;
+import javax.persistence.Tuple;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -196,6 +197,27 @@ public class JPAGameDAO implements GameDAO {
 		}
 		
 		return events;
+	}
+	
+	public List<String> fetchPeriodTypesByGame(int gameId) {
+		EntityManager em = HibernateUtil.createEntityManager();
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		
+		CriteriaQuery<Tuple> query = cb.createQuery(Tuple.class);
+		Root<GameEvent> eventRoot = query.from(GameEvent.class);
+		eventRoot.join("game", JoinType.INNER);
+		
+		query.multiselect(eventRoot.<Integer>get("periodNumber").alias("periodNumber"), eventRoot.<String>get("periodType").alias("periodType"))
+				.distinct(true)
+				.where(cb.equal(eventRoot.get("game").get("id"), gameId))
+				.orderBy(cb.asc(eventRoot.get("periodNumber")));
+		
+		List<Tuple> periodsTuple = em.createQuery(query).getResultList();
+		List<String> periods = new ArrayList<String>();
+		for(Tuple p : periodsTuple) {
+			periods.add((String) p.get("periodType"));
+		}
+		return periods;
 	}
 	
 	private List<String> getKeyEventFilter() {

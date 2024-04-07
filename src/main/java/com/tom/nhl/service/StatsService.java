@@ -1,7 +1,9 @@
 package com.tom.nhl.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -10,6 +12,7 @@ import com.tom.nhl.api.game.GameBaseData;
 import com.tom.nhl.api.playoffspider.PlayoffBracket;
 import com.tom.nhl.api.playoffspider.PlayoffMatch;
 import com.tom.nhl.api.playoffspider.PlayoffSpider;
+import com.tom.nhl.api.stats.GameStats;
 import com.tom.nhl.api.stats.RegulationTeamStandings;
 import com.tom.nhl.api.stats.SkaterStats;
 import com.tom.nhl.api.stats.TeamStats;
@@ -52,6 +55,17 @@ public class StatsService {
 	public PlayoffSpider getPlayoffSpider(RegulationTeamStandings teamStandings, List<GameBaseData> playoffGames) {
 		PlayoffSpider playoffSpider = mapPlayoffSpider(teamStandings, playoffGames);
 		return playoffSpider;
+	}
+	
+	public Map<String, GameStats> getGameStatsById(int gameId, int periodNum) {
+		long start = System.currentTimeMillis();
+		List<GameStats> stats = statsDAO.fetchGameStatsById(gameId, periodNum);
+		Map<String, GameStats> statsMap = new HashMap<String, GameStats>();
+		for(GameStats s : stats) {
+			statsMap.put(s.getTeam(), s);
+		}
+		System.out.println("fetching game stats took: " + (System.currentTimeMillis() - start) + "\n");
+		return statsMap;
 	}
 	
 	private PlayoffSpider mapPlayoffSpider(RegulationTeamStandings teamStandings, List<GameBaseData> playoffGames) {

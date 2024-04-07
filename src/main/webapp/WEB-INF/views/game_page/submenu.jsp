@@ -12,6 +12,13 @@
 		</c:otherwise>
 	</c:choose>
 	
-	<a>Game Stats</a>
+	<c:choose>
+		<c:when test="${pageNavigation == 'GameStats'}">
+			<a class="selected" href="/NHL/game/${gameId}/gameStats">Game Stats</a></c:when>
+		<c:otherwise>
+			<a href="/NHL/game/${gameId}/gameStats">Game Stats</a>
+		</c:otherwise>
+	</c:choose>
+	
 	<a>Player Stats</a>
 </div>

@@ -29,7 +29,11 @@ Html page is then filled by retrieved data and styled with CSS and Javascript.
 ![statspage players pagination](readme-imgs/statspage-player-pagination-screen.png)
 ### Game page
 #### Overview
+-right side serves as navigation between games that are relevant to the selected one 
+-currently only head to head games during season, but last x games for both teams are on TODO list
 ![gamepage overview](readme-imgs/game-page-overview-screen.png)
+#### Game stats
+![gamepage gamestats](readme-imgs/game-page-game-stats-screen.png)
 ### Player page
 TODO
 ### Team Page

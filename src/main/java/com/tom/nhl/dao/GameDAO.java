@@ -15,4 +15,5 @@ public interface GameDAO {
 	public List<GameBasicDataView> fetchGamesGoalsPerPeriodData(List<GameBasicDataView> games);
 	public List<GameBasicDataView> fetchPlayoffGamesBasicDataBySeason(int season);
 	public List<GameEvent> fetchGamesKeyEventsById(int id);
+	public List<String> fetchPeriodTypesByGame(int gameId);
 }

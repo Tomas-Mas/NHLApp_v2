@@ -53,6 +53,7 @@
     <mapping class="com.tom.nhl.entity.view.GameBasicDataView"/>
     <mapping class="com.tom.nhl.entity.view.RegulationTeamStats"/>
     <mapping class="com.tom.nhl.entity.view.SkaterStatsPerGame"/>
+    <mapping class="com.tom.nhl.entity.view.GameStatsView"/>
 
     <!-- Drop and re-create the database schema on startup -->
     <!-- <property name="hbm2ddl.auto">update</property>
