@@ -27,17 +27,18 @@ CREATE TABLE Teams
     t_id         INTEGER NOT NULL ,
     t_jsonId     INTEGER NOT NULL ,
     name         VARCHAR2 (50) NOT NULL ,
-    abbreviation VARCHAR2 (5) ,
+    abbreviation VARCHAR2 (5) NOT NULL ,
     teamName     VARCHAR2 (15) NOT NULL ,
     shortName    VARCHAR2 (15) NOT NULL ,
     venueId      INTEGER NOT NULL ,
     timeZoneId   INTEGER NOT NULL ,
     location     VARCHAR2 (25) NOT NULL ,
-    firstYear    INTEGER NOT NULL ,
-    active       VARCHAR2 (5) NOT NULL
+    firstYear    INTEGER ,
+    active       VARCHAR2 (5)
   );
 ALTER TABLE Teams ADD CONSTRAINT Teams_PK PRIMARY KEY ( t_id );
-ALTER TABLE Teams ADD CONSTRAINT Teams_JsonId UNIQUE ( t_jsonId );
+ALTER TABLE Teams ADD CONSTRAINT Teams_jsonId UNIQUE ( t_jsonId );
+ALTER TABLE Teams ADD CONSTRAINT Teams_abbr UNIQUE ( abbreviation );
 
 CREATE TABLE Venues
   (
@@ -58,11 +59,11 @@ ALTER TABLE TimeZones ADD CONSTRAINT TimeZones_PK PRIMARY KEY ( tz_id );
 CREATE TABLE Divisions
   (
     d_id     INTEGER NOT NULL ,
-    d_jsonId INTEGER NOT NULL ,
+    d_jsonId INTEGER ,
     name     VARCHAR2 (15) NOT NULL
   );
 ALTER TABLE Divisions ADD CONSTRAINT Divisions_PK PRIMARY KEY ( d_id );
-ALTER TABLE Divisions ADD CONSTRAINT Divisions_JsonId UNIQUE ( d_jsonId );
+ALTER TABLE Divisions ADD CONSTRAINT Divisions_Name UNIQUE ( name );
 
 create table Division_Teams (
     division_id integer not null,
@@ -74,11 +75,11 @@ alter table Division_Teams add constraint Division_Teams_PK primary key (divisio
 CREATE TABLE Conferences
   (
     c_id     INTEGER NOT NULL ,
-    c_jsonId INTEGER NOT NULL ,
+    c_jsonId INTEGER ,
     name     VARCHAR2 (15) NOT NULL
   ) ;
 ALTER TABLE Conferences ADD CONSTRAINT Conferences_PK PRIMARY KEY ( c_id );
-ALTER TABLE Conferences ADD CONSTRAINT Conferences_JsonId UNIQUE ( c_jsonId );
+ALTER TABLE Conferences ADD CONSTRAINT Conferences_Name UNIQUE ( name );
 
 create table Conference_Teams (
     conference_id integer not null,
@@ -145,36 +146,14 @@ CREATE TABLE Players
 ALTER TABLE Players ADD CONSTRAINT Players_PK PRIMARY KEY ( p_id );
 ALTER TABLE Players ADD CONSTRAINT Players_jsonId UNIQUE ( p_jsonId );
 
-create table SkaterStats(
-    ss_id integer not null,
-    timeOnIce varchar2(10) not null,
-    ppTimeOnIce varchar2(10) not null,
-    shTimeOnIce varchar2(10) not null,
-    penaltyMinutes integer not null,
-    plusMinus integer not null
-);
-alter table SkaterStats add constraint SkaterStats_PK primary key(ss_id);
-
-create table GoalieStats(
-    gs_id integer not null,
-    timeOnIce varchar2(10) not null,
-    penaltyMinutes integer not null,
-    shots integer not null,
-    saves integer not null,
-    ppShots integer not null,
-    ppSaves integer not null,
-    shShots integer not null,
-    shSaves integer not null
-);
-alter table GoalieStats add constraint GoalieStats_PK primary key(gs_id);
-
 create table Rosters(
     r_id integer not null,
     g_id integer not null,
     t_id integer not null,
     p_id integer not null,
-    ss_id integer,
-    gs_id integer
+    pos_id integer not null,
+    timeOnIce varchar(10) not null,
+    plusMinus integer not null
 );
 alter table Rosters add constraint Rosters_PK primary key(r_id);
 alter table rosters add constraint Rosters_unique_gtp unique (g_id, t_id, p_id);
@@ -186,7 +165,6 @@ create table EventPlayers(
     role varchar2(50)
 );
 alter table EventPlayers add constraint EventPlayers_PK primary key(event_id, roster_id);
-
 
 
 ALTER TABLE Teams ADD CONSTRAINT Teams_Venues_FK FOREIGN KEY ( venueId ) REFERENCES Venues ( v_id );
@@ -208,12 +186,9 @@ ALTER TABLE Players ADD CONSTRAINT Players_Teams_FK FOREIGN KEY ( currentTeamId 
 ALTER TABLE Rosters ADD CONSTRAINT Rosters_Games_FK FOREIGN KEY (g_id) REFERENCES Games (g_id);
 ALTER TABLE Rosters ADD CONSTRAINT Rosters_Teams_FK FOREIGN KEY (t_id) REFERENCES Teams (t_id);
 ALTER TABLE Rosters ADD CONSTRAINT Rosters_Players_FK FOREIGN KEY (p_id) REFERENCES Players (p_id);
-ALTER TABLE Rosters ADD CONSTRAINT Rosters_SkaterStats_FK FOREIGN KEY(ss_id) REFERENCES SkaterStats(ss_id);
-ALTER TABLE Rosters ADD CONSTRAINT Rosters_GoalieStats_FK FOREIGN KEY(gs_id) REFERENCES GoalieStats(gs_id);
+ALTER TABLE Rosters ADD CONSTRAINT Rosters_Positions_FK FOREIGN KEY (pos_id) REFERENCES Positions(p_id);
 ALTER TABLE EventPlayers ADD CONSTRAINT EventPlayers_GameEvents_FK FOREIGN KEY(event_id) REFERENCES GameEvents (ge_id);
 ALTER TABLE EventPlayers ADD CONSTRAINT EventPlayers_Rosters_FK FOREIGN KEY(roster_id) REFERENCES Rosters(r_id);
-
-
 
 
 CREATE SEQUENCE seq_games_id
@@ -322,24 +297,4 @@ increment by 1
 minvalue 1
 maxvalue 9999999999
 cache 5
-nocycle;
-
-/
-
-create sequence seq_skaterStats_id
-start with 1
-increment by 1
-minvalue 1
-maxvalue 99999999999
-cache 5
-nocycle;
-
-/
-
-create sequence seq_goalieStats_id
-start with 1
-increment by 1
-minvalue 1
-maxvalue 9999999999
-cache 2
 nocycle;

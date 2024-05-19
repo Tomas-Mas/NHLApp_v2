@@ -18,4 +18,4 @@ from (
     ) gameData
     group by gameData.gameId, gameData.team, gameData.period
 ) data
-with read only
+with read only;

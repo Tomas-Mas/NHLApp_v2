@@ -22,8 +22,9 @@ public class Roster {
 	private Game game;
 	private Team team;
 	private Player player;
-	private SkaterStats skaterStats;
-	private GoalieStats goalieStats;
+	private Position position;
+	private String timeOnIce;
+	private Integer plusMinus;
 	
 	@Id
 	@SequenceGenerator(name = "rosterIdGenerator", sequenceName = "SEQ_ROSTERS_ID", allocationSize = 1)
@@ -64,21 +65,27 @@ public class Roster {
 	}
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ss_id")
-	public SkaterStats getSkaterStats() {
-		return skaterStats;
+	@JoinColumn(name = "pos_id")
+	public Position getPosition() {
+		return position;
 	}
-	public void setSkaterStats(SkaterStats skaterStats) {
-		this.skaterStats = skaterStats;
-	}
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "gs_id")
-	public GoalieStats getGoalieStats() {
-		return goalieStats;
-	}
-	public void setGoalieStats(GoalieStats goalieStats) {
-		this.goalieStats = goalieStats;
+	public void setPosition(Position position) {
+		this.position = position;
 	}
 	
+	@Column(name = "timeOnIce")
+	public String getTimeOnIce() {
+		return timeOnIce;
+	}
+	public void setTimeOnIce(String timeOnIce) {
+		this.timeOnIce = timeOnIce;
+	}
+	
+	@Column(name = "plusMinus")
+	public Integer getPlusMinus() {
+		return plusMinus;
+	}
+	public void setPlusMinus(Integer plusMinus) {
+		this.plusMinus = plusMinus;
+	}
 }

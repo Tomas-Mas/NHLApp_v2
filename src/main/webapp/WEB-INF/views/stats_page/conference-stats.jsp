@@ -7,16 +7,16 @@
 				<table class="conferenceTable">
 					<tr class="statHeader">
 						<th class="conferenceName" colspan="3">${conference}</th>
-						<th title="Games Played">GP</th>
-						<th title="Regulation wins">W</th>
-						<th title="Overtime/Shootout wins">OW</th>
-						<th title="Overtime/Shootout loses">OL</th>
-						<th title="Regulation loses">L</th>
-						<th title="Goals for">GF</th>
-						<th title="Goals against">GA</th>
-						<th title="Goals difference">+/-</th>
-						<th title="Points">P</th>
-						<th title="Points percentage">P%</th>
+						<th class="sortableHeader" title="Games Played">GP</th>
+						<th class="sortableHeader" title="Regulation wins">W</th>
+						<th class="sortableHeader" title="Overtime/Shootout wins">OW</th>
+						<th class="sortableHeader" title="Overtime/Shootout loses">OL</th>
+						<th class="sortableHeader" title="Regulation loses">L</th>
+						<th class="sortableHeader" title="Goals for">GF</th>
+						<th class="sortableHeader" title="Goals against">GA</th>
+						<th class="sortableHeader" title="Goals difference">+/-</th>
+						<th class="sortableHeader" title="Points">P</th>
+						<th class="sortableHeader" title="Points percentage">P%</th>
 					</tr>
 					<c:forEach var="team" varStatus="loop" items="${teamStandings.getTeamsByConference(conference)}">
 						<tr class="team ${team.teamId} highlightable">

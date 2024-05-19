@@ -6,6 +6,9 @@ document.onreadystatechange = function() {
 }
 
 var expandedElement = null;
+var sortedColumnIndex = 0;
+var descSortDirection = true;
+var markedHeaders = [];
 
 function setClickableEvents() {
 	document.getElementById('mainMenu').onclick = menuClicked;
@@ -25,6 +28,11 @@ function setClickableEvents() {
 	});
 	
 	document.getElementById('playoffContainer').onclick = playoffClicked;
+	
+	tblHeaders = document.getElementsByClassName('sortableHeader');
+	for(let i = 0; i < tblHeaders.length; i++) {
+		tblHeaders[i].onclick = sortTable;
+	}
 	
 	//nav buttons
 	navBtnChange();
@@ -168,5 +176,78 @@ function mouseOut(event) {
 	}
 }
 
+function sortTable(event) {
+	let th = event.target;
+	let tr = th.parentNode;
+	var index = Array.prototype.indexOf.call(tr.children, event.target);
+	var offset = 2;
+	var tables = [];
+	var switching, rows, x, y, i, shouldSwitch;
+	
+	tables = document.getElementsByClassName('conferenceTable');
+	if(tables.length === 0)
+		tables = document.getElementsByClassName('divisionTable');
+	
+	if(sortedColumnIndex === (index + offset)) {
+		descSortDirection = !descSortDirection;
+	} else {
+		sortedColumnIndex = index + offset;
+		descSortDirection = true;
+	}
+	
+	markHeaders(descSortDirection, tables, index);
+	
+	for(let l = 0; l < tables.length; l++) {
+		switching = true;
+		while(switching) {
+			switching = false;
+			rows = tables[l].rows;
+			for(i = 1; i < (rows.length - 1); i++) {
+				shouldSwitch = false;
+				x = rows[i].getElementsByTagName('td')[index + offset];
+				y = rows[i + 1].getElementsByTagName('td')[index + offset];
+				if(descSortDirection) {
+					if(Number(x.innerHTML) < Number(y.innerHTML)) {
+						shouldSwitch = true;
+						break;
+					}
+				} else {
+					if(Number(x.innerHTML) > Number(y.innerHTML)) {
+						shouldSwitch = true;
+						break;
+					}
+				}
+			}
+			if(shouldSwitch) {
+				rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+	      		switching = true;
+			}
+		}
+	}
+}
 
+//'\u2191' up
+//'\u2193' down
+
+function markHeaders(descSort, tables, headerIndex) {
+	markedHeaders.forEach((header) => {
+		header.textContent = header.textContent.substring(0, header.textContent.indexOf(' '));
+	});
+	
+	var headers = [];
+	for(let i = 0; i < tables.length; i++) {
+		headers[i] = tables[i].getElementsByTagName('tr')[0].getElementsByTagName('th')[headerIndex];
+	}
+	
+	if(descSort) {
+		headers.forEach((header) => {
+			header.textContent += ' \u2193';
+		});
+	} else {
+		headers.forEach((header) => {
+			header.textContent += ' \u2191';
+		});
+	}
+	markedHeaders = headers;
+}
 

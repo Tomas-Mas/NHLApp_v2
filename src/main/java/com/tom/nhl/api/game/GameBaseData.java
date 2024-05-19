@@ -139,11 +139,11 @@ public class GameBaseData {
 	public String getEndPeriodType() {
 		//return endPeriodType;
 		
-		if(endPeriodType.equals("REGULAR"))
+		if(endPeriodType.equals("REG"))
 			return "";
-		else if(endPeriodType.equals("OVERTIME"))
+		else if(endPeriodType.equals("OT"))
 			return "OT";
-		else if(endPeriodType.equals("SHOOTOUT"))
+		else if(endPeriodType.equals("SO"))
 			return "SO";
 		else
 			return "N/A";

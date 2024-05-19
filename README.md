@@ -13,7 +13,10 @@ Dynamic web project showing data from Oracle db, that are loaded from api [NHLDa
 ## General description
 User request are served by Spring controllers. <br>
 Data are retrieved from db using HQL for simple queries, JPA criteria API for more complex queries. <br>
-Html page is then filled by retrieved data and styled with CSS and Javascript.
+Html page is then filled by retrieved data and styled with CSS and Javascript. <br>
+Sql scripts and views are in sql folder <br>
+DB model:
+![database model](readme-imgs/db_model.png)
 
 ## Pages
 

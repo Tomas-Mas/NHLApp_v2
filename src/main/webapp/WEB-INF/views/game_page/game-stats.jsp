@@ -42,9 +42,9 @@
 				</c:choose>
 				<c:forEach items="${periods}" var="period" varStatus="loop">
 					<c:choose>
-						<c:when test="${period == 'REGULAR'}"><c:set var="periodName" value="${loop.index + 1}. Period" scope="page"></c:set></c:when>
-						<c:when test="${period == 'OVERTIME'}"><c:set var="periodName" value="${loop.index - 2}. OT" scope="page"></c:set></c:when>
-						<c:when test="${period == 'SHOOTOUT'}"><c:set var="periodName" value="Shootout" scope="page"></c:set></c:when>
+						<c:when test="${period == 'REG'}"><c:set var="periodName" value="${loop.index + 1}. Period" scope="page"></c:set></c:when>
+						<c:when test="${period == 'OT'}"><c:set var="periodName" value="${loop.index - 2}. OT" scope="page"></c:set></c:when>
+						<c:when test="${period == 'SO'}"><c:set var="periodName" value="Shootout" scope="page"></c:set></c:when>
 					</c:choose>
 					<c:choose>
 						<c:when test="${periodNum.orElse(0) == loop.index + 1}">

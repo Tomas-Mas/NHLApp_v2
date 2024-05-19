@@ -57,17 +57,21 @@ public class Tiebreakers {
 	}
 	
 	private static int manualTiebreaker(TeamStats t1, TeamStats t2) {
-		if(teamNameAndSeasonCheck(20152016, t1, t2, "Arizona Coyotes", "Winnipeg Jets")) {
+		//2015 - 2016
+		if(teamNameAndSeasonCheck(20152016, t1, t2, "Winnipeg Jets", "Arizona Coyotes"))
 			return manualResForTiebreaker(t1, t2, "Arizona Coyotes");
-		}
-		
-		if(teamNameAndSeasonCheck(20152016, t1, t2, "Detroit Red Wings", "Boston Bruins")) {
+		if(teamNameAndSeasonCheck(20152016, t1, t2, "Boston Bruins", "Detroit Red Wings"))
 			return manualResForTiebreaker(t1, t2, "Detroit Red Wings");
-		}
 		
-		if(teamNameAndSeasonCheck(20162017, t1, t2, "San Jose Sharks", "St. Louis Blues")) {
+		//2016 - 2017
+		if(teamNameAndSeasonCheck(20162017, t1, t2, "San Jose Sharks", "St. Louis Blues"))
 			return manualResForTiebreaker(t1, t2, "St. Louis Blues");
-		}
+		if(teamNameAndSeasonCheck(20162017, t1, t2, "Nashville Predators", "Calgary Flames"))
+			return manualResForTiebreaker(t1, t2, "Calgary Flames");
+		
+		//2017 - 2018
+		if(teamNameAndSeasonCheck(20172018, t1, t2, "New Jersey Devils", "Columbus Blue Jackets"))
+			return manualResForTiebreaker(t1, t2, "Columbus Blue Jackets");
 			
 		return 0;
 	}
