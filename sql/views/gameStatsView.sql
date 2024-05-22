@@ -7,8 +7,8 @@ select gameData.g_id as gameId, gameData.periodNumber, gameData.team,
         case when gameData.name = 'Giveaway' then 1 else 0 end as giveaways,
         case when gameData.name = 'Takeaway' then 1 else 0 end as takeaways,
         case when gameData.name = 'Hit' then 1 else 0 end as hits,
-        case when gameData.name in ('Shot', 'Blocked Shot', 'Missed Shot', 'Goal') then 1 else 0 end as shots,
-        case when gameData.name in ('Shot', 'Goal') then 1 else 0 end as shotsOnGoal, 
+        case when gameData.name in ('Shot On Goal', 'Blocked Shot', 'Missed Shot', 'Goal') then 1 else 0 end as shots,
+        case when gameData.name in ('Shot On Goal', 'Goal') then 1 else 0 end as shotsOnGoal, 
         case when gameData.name = 'Blocked Shot' then 1 else 0 end as blockedShots,
         case when gameData.name = 'Missed Shot' then 1 else 0 end as missedShots,
         case when gameData.name = 'Goal' then 1 else 0 end as goals,
@@ -27,7 +27,7 @@ from (
         (e.name = 'Giveaway') or 
         (e.name = 'Takeaway') or
         (e.name = 'Hit' and ep.role = 'Hitter') or
-        (e.name = 'Shot' and ep.role = 'Shooter') or
+        (e.name = 'Shot On Goal' and ep.role = 'Shooter') or
         (e.name = 'Missed Shot' and ep.role = 'Shooter') or
         (e.name = 'Blocked Shot' and ep.role = 'Blocker') or
         (e.name = 'Goal' and ep.role = 'Scorer')

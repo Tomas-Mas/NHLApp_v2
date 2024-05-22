@@ -3,7 +3,7 @@ package com.tom.nhl.util;
 import java.util.ArrayList;
 import java.util.Comparator;
 
-import com.tom.nhl.api.stats.TeamStats;
+import com.tom.nhl.dto.TeamStats;
 
 public class Tiebreakers {
 
