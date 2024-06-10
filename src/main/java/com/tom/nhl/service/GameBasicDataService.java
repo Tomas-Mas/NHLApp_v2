@@ -32,12 +32,12 @@ public class GameBasicDataService {
 		return mapper.toGameBasicDataWithPeriodGoalsDTO(games);
 	}
 	
-	public Map<String, List<GameBasicDataDTO>> getHeadToHeadMapByGameAndTeams(int gameId, int team1Id, int team2Id) {
+	public Map<String, List<GameBasicDataDTO>> getHeadToHeadMapByGame(int gameId) {
 		Map<String, List<GameBasicDataDTO>> gameMap = new HashMap<String, List<GameBasicDataDTO>>();
 		List<GameBasicDataDTO> regulationGames = new ArrayList<GameBasicDataDTO>();
 		List<GameBasicDataDTO> playoffGames = new ArrayList<GameBasicDataDTO>();
 		
-		List<GameBasicDataView> gameEntities = gameBasicDataDAO.getByGameAndTeams(gameId, team1Id, team2Id);
+		List<GameBasicDataView> gameEntities = gameBasicDataDAO.getH2hByGame(gameId);
 		List<GameBasicDataDTO> games = mapper.toGameBasicDataDTO(gameEntities);
 		
 		for(GameBasicDataDTO g : games) {

@@ -46,33 +46,48 @@ public class JPAGameBasicDataDAO implements GameBasicDataDAO {
 		return getWithGoalsPerPeriodByGames(gameList);
 	}
 	
-	public List<GameBasicDataView> getByGameAndTeams(int gameId, int team1Id, int team2Id) {
+	public List<GameBasicDataView> getH2hByGame(int gameId) {
 		EntityManager em = HibernateUtil.createEntityManager();
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		
 		CriteriaQuery<GameBasicDataView> query = cb.createQuery(GameBasicDataView.class);
 		Root<GameBasicDataView> gameViewRoot = query.from(GameBasicDataView.class);
 		
-		//get game's season subquery
+		//game's season subquery
 		Subquery<Integer> sqSeason = query.subquery(Integer.class);
 		Root<Game> sqSeasonGameRoot = sqSeason.from(Game.class);
 		sqSeason.select(sqSeasonGameRoot.<Integer>get("season"))
 				.where(cb.equal(sqSeasonGameRoot.get("id"), gameId));
 		
-		//get list of game ids with given teams for season subquery
+		//home team id subquery
+		Subquery<Integer> sqTeam1Id = query.subquery(Integer.class);
+		Root<Game> sqTeam1GameRoot = sqTeam1Id.from(Game.class);
+		sqTeam1GameRoot.join("homeTeam", JoinType.INNER);
+		sqTeam1Id.select(sqTeam1GameRoot.<Team>get("homeTeam").<Integer>get("id"))
+				.where(cb.equal(sqTeam1GameRoot.get("id"), gameId));
+		
+		//away team id subquery
+		Subquery<Integer> sqTeam2Id = query.subquery(Integer.class);
+		Root<Game> sqTeam2GameRoot = sqTeam2Id.from(Game.class);
+		sqTeam2GameRoot.join("homeTeam", JoinType.INNER);
+		sqTeam2Id.select(sqTeam2GameRoot.<Team>get("awayTeam").<Integer>get("id"))
+				.where(cb.equal(sqTeam2GameRoot.get("id"), gameId));
+		
+		//game ids for teams and season by gameId parameter
 		Subquery<Integer> sqGames = query.subquery(Integer.class);
 		Root<Game> sqGameRoot = sqGames.from(Game.class);
 		Join<Game, Team> homeTeam = sqGameRoot.join("homeTeam", JoinType.INNER);
 		Join<Game, Team> awayTeam = sqGameRoot.join("awayTeam", JoinType.INNER);
 		
-		Predicate team1Predicate = cb.or(cb.equal(homeTeam.get("id"), team1Id), cb.equal(awayTeam.get("id"), team1Id));
-		Predicate team2Predicate = cb.or(cb.equal(homeTeam.get("id"), team2Id), cb.equal(awayTeam.get("id"), team2Id));
+		Predicate team1Predicate = cb.or(cb.equal(homeTeam.get("id"), sqTeam1Id), cb.equal(awayTeam.get("id"), sqTeam1Id));
+		Predicate team2Predicate = cb.or(cb.equal(homeTeam.get("id"), sqTeam2Id), cb.equal(awayTeam.get("id"), sqTeam2Id));
 		Predicate teamsPredicate = cb.and(team1Predicate, team2Predicate);
 		Predicate seasonPredicate = cb.equal(sqGameRoot.get("season"), sqSeason);
 		
 		sqGames.select(sqGameRoot.<Integer>get("id"))
 				.where(teamsPredicate, seasonPredicate);
 		
+		//final select for game views by game ids
 		query.select(gameViewRoot)
 				.where(cb.in(gameViewRoot.get("id")).value(sqGames))
 				.orderBy(cb.desc(gameViewRoot.get("gameDate")));

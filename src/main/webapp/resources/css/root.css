@@ -5,6 +5,14 @@ body {
 	margin: 0px auto;
 }
 
+.error {
+	color: var(--contentMainTableTextColor);
+}
+
+.numeric {
+	text-align: center;
+}
+
 :root {
 	--htmlBackground: #000d1a;
 	

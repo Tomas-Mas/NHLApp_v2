@@ -1,18 +1,40 @@
+const sidebarStatsUrl = '/NHL/c/stats/sidebarBySeasonScope/';
+const sidebarRegulationUrl = '/NHL/c/stats/regulation/';
+const gameListUrl = '/NHL/c/game/list/';
+const gameDetailUrl = '/NHL/c/game/keyEvents/';
+
 var expandedElement = null;
 
 document.onreadystatechange = function() {
 	if(document.readyState === 'complete') {
+		fetchComponents();
 		setClickableEvents();
 	}
+}
+
+function fetchComponents() {
+	fetch(gameListUrl + getActiveSeason())
+		.then(response => response.text())
+		.then(data => {
+			document.getElementById('game-list-section').innerHTML = data;
+		})
+		.catch(err => console.log(err));
+		
+	fetch(sidebarStatsUrl + getActiveSeason())
+		.then(response => response.text())
+		.then(data => {
+			document.getElementById('stats-section').innerHTML = data;
+		})
+		.catch(err => console.log(err));
 }
 
 function setClickableEvents() {
 	document.getElementById('mainMenu').onclick = menuClicked;
 	document.querySelector('select#season').addEventListener('change', function() {
-		window.location.replace('/NHL/mainpage/' + getActiveSeason());
+		window.location.href = mainPageUrl + getActiveSeason();
 	})
 	
-	document.getElementById('mainFinishedTableRegulation').onclick = function(e) {
+	document.getElementById('game-list-section').onclick = function(e) { //'games-table'
 		if(e.target.className === 'gameDetailPlayerName') {
 			playerClicked(e.target);
 		} else if (e.target.className === 'gamePageButton') {
@@ -24,7 +46,7 @@ function setClickableEvents() {
 		}
 	}
 	
-	document.getElementById('regulationStats').onclick = function(e) {
+	document.getElementById('stats-section').onclick = function(e) {
 		if(e.target.className === 'teamName') {
 			teamClicked(e.target);
 		} else if(e.target.className === 'seasonScope') {
@@ -52,7 +74,7 @@ function teamClicked(target) {
 
 function gamePageButtonClicked(target) {
 	var gameId = target.id;
-	window.location.href = '/NHL/game/' + gameId;
+	window.location.href = gamePageUrl + gameId;
 }
 
 function mainTableHeaderClicked(headerRow) {
@@ -60,9 +82,10 @@ function mainTableHeaderClicked(headerRow) {
 	var dataRow = document.getElementById('dataRow' + rowId);
 	
 	if(dataRow.getElementsByTagName('td').length == 0) {
-		$.get("/NHL/mainpage/showGameDetail/" + rowId, (data) => {
-			dataRow.innerHTML = data;
-		})
+		fetch(gameDetailUrl + rowId)
+			.then(result => result.text())
+			.then(data => dataRow.innerHTML = data)
+			.catch(err => console.log(err));
 	}
 	
 	if(dataRow.style.display === 'none') {
@@ -73,15 +96,17 @@ function mainTableHeaderClicked(headerRow) {
 }
 
 function seasonScopeBtnClicked(btn) {
-	$.get("/NHL/mainpage/changeSeasonScope/" + getActiveSeason() + "/" + btn.id, (data) => {
-		document.getElementById('regulationStats').innerHTML = data;
-	});
+	fetch(sidebarStatsUrl + getActiveSeason() + '/' + btn.id)
+		.then(response => response.text())
+		.then(data => document.getElementById('stats-section').innerHTML = data)
+		.catch(err => console.log(err));
 }
 
 function regulationScopeBtnClicked(btn) {
-	$.get("/NHL/mainpage/changeRegulationScope/" + getActiveSeason() + "/" + btn.id, (data) => {
-		document.getElementById('regulationStats').innerHTML = data;
-	});
+	fetch(sidebarRegulationUrl + getActiveSeason() + '/' + btn.id)
+		.then(response => response.text())
+		.then(data => document.getElementById('stats-section').innerHTML = data)
+		.catch(err => console.log(err));
 }
 
 function playoffClicked(event) {

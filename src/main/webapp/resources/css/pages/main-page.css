@@ -1,0 +1,13 @@
+main {
+	display: flex;
+}
+
+#game-list-section {
+	flex: 2;
+	margin: 10px;
+}
+
+#stats-section {
+	flex: 1;
+	margin-top: 10px;
+}

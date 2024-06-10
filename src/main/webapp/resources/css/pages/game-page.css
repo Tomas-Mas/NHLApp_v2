@@ -1,0 +1,13 @@
+main {
+	display: flex;
+	gap: 10px;
+}
+
+#main-section {
+	flex: 2;
+}
+
+#right-sidebar-section {
+	flex: 1;
+	margin-top: 10px;
+}

@@ -1,7 +1,16 @@
+const sidebarPlayoffUrl = '/NHL/c/stats/playoff/';
+const statisticsUrl = '/NHL/c/stats/fullStats/';
+
 document.onreadystatechange = function() {
 	if(document.readyState === 'complete') {
-		setClickableEvents();
-		setMouseHoverEvents();
+		fetchComponents();
+		fetchStats();
+		
+		document.getElementById('mainMenu').onclick = menuClicked;
+		document.querySelector('select#season').addEventListener('change', function() {
+			window.location.href = statsPageUrl + getActiveSeason();
+		});
+		//setMouseHoverEvents();
 	}
 }
 
@@ -10,35 +19,58 @@ var sortedColumnIndex = 0;
 var descSortDirection = true;
 var markedHeaders = [];
 
-function setClickableEvents() {
-	document.getElementById('mainMenu').onclick = menuClicked;
-	document.querySelector('select#season').addEventListener('change', function() {
-		let formAction = document.getElementById('statsNavigation').getAttribute('action');
-		let newAction = formAction.substr(0, formAction.lastIndexOf('/') + 1);
-		newAction += getActiveSeason();
-		
-		let paramsStart = formAction.indexOf('?');
-		if(paramsStart > 0) {
-			newAction += formAction.substr(paramsStart);
-			document.getElementById('statsNavigation').setAttribute('action', newAction)
-			document.getElementById('statsNavigation').submit();
-		} else {
-			window.location.href = newAction;
-		}
-	});
+function fetchComponents() {
+	fetch(sidebarPlayoffUrl + getActiveSeason())
+		.then(response => response.text())
+		.then((data) => {
+			document.getElementById('playoff-section').innerHTML = data;
+		})
+		.then(() => {
+			document.getElementById('spider-container').onclick = playoffClicked;
+			document.getElementById('seasonScope').remove();
+		})
+		.catch(err => console.log(err));
+}
+
+function fetchStats() {
+	var url = statisticsUrl + getActiveSeason();
+	var formData = document.getElementById('statsNavigation');
 	
-	document.getElementById('playoffContainer').onclick = playoffClicked;
+	if(formData != null) {
+		var params = new URLSearchParams();
+		new FormData(formData).forEach((value, key) => {
+			params.append(key, value);
+		});
+		url = statisticsUrl + getActiveSeason() + '?' + params;
+	}
+	console.log('url: ' + url);
+	
+	fetch(url)
+		.then(response => response.text())
+		.then(data => document.getElementById('stats-section').innerHTML = data)
+		.then(setStatsClickableEvents)
+		.catch(err => console.log(err));
+	
+}
+
+function setStatsClickableEvents() {
+	document.getElementById('statsNavigation').addEventListener('submit', function(e) {
+		e.preventDefault();
+	});
 	
 	tblHeaders = document.getElementsByClassName('sortableHeader');
 	for(let i = 0; i < tblHeaders.length; i++) {
 		tblHeaders[i].onclick = sortTable;
 	}
 	
-	//nav buttons
-	navBtnChange();
+	var radios = document.getElementById('statsNav').getElementsByTagName('input');
+	for(let i = 0; i < radios.length; i++) {
+		radios[i].addEventListener('change', function() {
+			fetchStats();
+		});
+	}
 	
-	//player table events
-	let playerTbls = document.getElementsByClassName('playerStatsContainerTable');
+	var playerTbls = document.getElementsByClassName('playerStatsContainerTable');
 	if(playerTbls.length > 0) {
 		tblOrderByChange();
 		tblReverseOrderChange();
@@ -76,15 +108,6 @@ function unexpandBrackets() {
 	}
 }
 
-function navBtnChange() {
-	var radios = document.getElementById("statsNav").getElementsByTagName("Input");
-	for(let i = 0; i < radios.length; i++) {
-		radios[i].addEventListener('change', function() {
-			document.getElementById('statsNavigation').submit();
-		});
-	}
-}
-
 function tblOrderByChange() {
 	var radios = document.querySelectorAll('[name="orderedBy"]');
 	for(let i = 0; i < radios.length; i++) {
@@ -105,7 +128,8 @@ function tblOrderByChange() {
 			if(radios[0].getAttribute('checked') === 'checked') {
 				radios[1].click();
 			} else {
-				document.getElementById('statsNavigation').submit();
+				//document.getElementById('statsNavigation').submit();
+				fetchStats();
 			}
 		});
 	}
@@ -115,65 +139,36 @@ function tblReverseOrderChange() {
 	var radios = document.querySelectorAll('[name="reverseOrder"]');
 	for(let i = 0; i < radios.length; i++) {
 		radios[i].addEventListener('change', function() {
-			document.getElementById('statsNavigation').submit();
+			//document.getElementById('statsNavigation').submit();
+			fetchStats()
 		});
 	}
 }
 
 function tblPaginationChange() {
-	document.getElementById('rowsPerPage').addEventListener('change', function() {
-		document.getElementById('statsNavigation').submit();
-	});
-	document.getElementById('pageNum').addEventListener('change', function() {
-		document.getElementById('statsNavigation').submit();
-	});
+	document.getElementById('rowsPerPage').addEventListener('change', fetchStats);
+	document.getElementById('pageNum').addEventListener('change', fetchStats);
 	document.getElementsByClassName('tableNavLeft')[0].addEventListener('click', function() {
 		let pageNum = document.getElementById('pageNum');
 		pageNum.setAttribute('value', pageNum.getAttribute('value') - 1);
-		document.getElementById('statsNavigation').submit();
+		fetchStats();
 	});
 	document.getElementsByClassName('tableNavRight')[0].addEventListener('click', function() {
 		let pageNum = document.getElementById('pageNum');
 		pageNum.setAttribute('value', Number(pageNum.getAttribute('value')) + 1);
-		document.getElementById('statsNavigation').submit();
+		fetchStats();
 	});
 }
 
 function tblResize() {
 	let resizeBtn = document.getElementsByClassName('tblPopupResize')[0];
 	resizeBtn.addEventListener('click', function() {
-		let playoffContainer = document.getElementById('playoffContainer');
-		if(playoffContainer.style.display === '') 
-			playoffContainer.style.display = 'none';
+		let playoffSection = document.getElementById('playoff-section');
+		if(playoffSection.style.display === '') 
+			playoffSection.style.display = 'none';
 		else
-			playoffContainer.style.display = '';
+			playoffSection.style.display = '';
 	});
-}
-
-function setMouseHoverEvents() {
-	var els = document.getElementsByClassName('highlightable');
-	for(var i = 0; i < els.length; i++) {
-		els[i].addEventListener("mouseover", mouseOver);
-		els[i].addEventListener("mouseout", mouseOut);
-	}
-}
-
-function mouseOver(event) {
-	var row = event.target.closest('tr').className;
-	var teamId = row.substring(0, 7);
-	var teamElements = document.getElementsByClassName(teamId);
-	for(var i = 0; i < teamElements.length; i++) {
-		teamElements[i].classList.add("ghost-highlight");
-	}
-}
-
-function mouseOut(event) {
-	var row = event.target.closest('tr').className;
-	var teamId = row.substring(0, 7);
-	var teamElements = document.getElementsByClassName(teamId);
-	for(var i = 0; i < teamElements.length; i++) {
-		teamElements[i].classList.remove("ghost-highlight");
-	}
 }
 
 function sortTable(event) {

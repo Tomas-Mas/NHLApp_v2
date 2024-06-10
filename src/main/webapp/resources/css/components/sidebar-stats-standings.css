@@ -1,0 +1,90 @@
+#regulationScope {
+	overflow: hidden;
+	margin-bottom: -5px;
+}
+
+#regulationScope input[type="radio"] {
+	opacity: 0;
+	width: 0;
+	margin: 0;
+}
+
+#regulationScope label {
+	width: 31%;
+}
+
+#regulationScope label {
+	display: inline-block;
+	text-align: center;
+	background: var(--contentMainTableRowHover);
+	color: var(--contentMainTableTextColor);
+	padding-top: 5px;
+	padding-bottom: 5px;
+	cursor: pointer;
+}
+
+#regulationScope input[type="radio"]:hover + label {
+	background: var(--contentMainTableBackground);
+	text-shadow: 2px 2px 1px black;
+	font-weight: bold;
+}
+
+#regulationScope input[type="radio"]:checked + label {
+	background: var(--contentMainTableBackground);
+}
+
+
+
+#team-standings table{
+	border-collapse: collapse;
+	width: 100%;
+	margin-top: 10px;
+	background-color: var(--contentMainTableBackground);
+	/*font-size: 11px;*/
+}
+
+#team-standings th {
+	background-color: var(--htmlBackground);
+	/*font-size: 13px;*/
+	margin-bottom: 5px;
+}
+
+#team-standings .conferenceName{
+	padding-left: 10px;
+	text-align: left;
+}
+
+#team-standings tr.header:not(:first-child) th {
+	padding-top: 10px;
+}
+
+#team-standings tr {
+	border-bottom: 1px solid var(--contentMainTableRowLine);
+}
+
+#team-standings tr:not(.header):hover {
+	background-color: var(--contentMainTableRowHover);
+}
+
+#team-standings td {
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+
+#team-standings .teamName:hover{
+	cursor: pointer;
+	text-shadow: 2px 2px 1px black;
+}
+
+#team-standings table tr {
+	color: var(--contentMainTableRowLine);
+}
+
+#team-standings table tr:first-child {
+	width: 400px;
+}
+
+#team-standings table .teamPic {
+	width: 15px;
+	height: 15px;
+}

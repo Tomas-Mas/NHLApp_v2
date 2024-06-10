@@ -1,0 +1,229 @@
+/*		sub navigation		*/
+#statsNavigation {
+	width: 100%;
+	margin-top: 10px;
+}
+
+#statsNav {
+	width: 95%;
+	padding-top: 10px;
+	margin: 0 auto;
+	display: flex;
+	flex-direction: column;
+}
+
+#statsNav .navScopeContainer {
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 5px;
+}
+
+#statsNav .navScopeContainer .navUnit3Items {
+	display: flex;
+	width: 30%;
+}
+
+#statsNav .navScopeContainer .navUnit2Items {
+	display: flex;
+	width: 45%;
+}
+
+#statsNav input[type="radio"] {
+	opacity: 0;
+	width: 0;
+	margin: 0px;
+}
+
+#statsNav label {
+	width: 100%;
+	text-align: center;
+	background: var(--contentMainTableRowHover);
+	color: var(--contentMainTableTextColor);
+	padding-top: 5px;
+	padding-bottom: 5px;
+	cursor: pointer;
+}
+
+#statsNav input[type="radio"]:hover + label {
+	/*background: var(--contentMainTableBackground);*/
+	text-shadow: 2px 2px 1px black;
+	font-weight: bold;
+}
+
+#statsNav input[type="radio"]:checked + label {
+	background: var(--contentMainTableBackground);
+}
+
+/*		main table headers	*/
+.playerStatsContainerTable th input[type="radio"] {
+	opacity: 0;
+	width: 0;
+	margin: 0px;
+}
+
+.playerStatsContainerTable th label {
+	cursor: pointer;
+}
+
+.playerStatsContainerTable th input[type="radio"]:hover + label {
+	text-shadow: 2px 2px 1px grey;
+	font-weight: bold;
+}
+
+.conferenceTable th:hover, .divisionTable th:hover {
+	text-shadow: 2px 2px 1px grey;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+
+/*		main table 		*/
+.regulationContainerTable{
+	width: 100%;
+}
+
+.conferenceTable, .divisionTable, .playerStatsContainerTable {
+	margin: auto;
+	width: 95%;
+}
+
+.teamPic {
+	width: 15px;
+	height: 15px;
+}
+
+.rank {
+	width: 5%;
+}
+
+.conferenceTable .teamName, .divisionTable .teamName{
+	width: 25%;
+}
+
+.divisionTable, .conferenceTable, .playerStatsContainerTable {
+	margin-top: 10px;
+}
+
+.regulationContainerTable table, .playerStatsContainerTable {
+	color: var(--contentMainTableTextColor);
+	border-collapse: collapse;
+	background-color: var(--contentMainTableBackground);
+}
+
+main table th {
+	background-color: var(--htmlBackground);
+	margin-bottom: 5px;
+}
+
+main table tr.header:not(:first-child) th {
+	padding-top: 10px;
+}
+
+.conferenceTable tr, .divisionTable tr {
+	border-bottom: 1px solid var(--contentMainTableRowLine);
+}
+
+.conferenceTable tr:not(.header):hover {
+	background-color: var(--contentMainTableRowHover);
+}
+
+.divisionTable tr:not(.header):hover {
+	background-color: var(--contentMainTableRowHover);
+}
+
+.playerStatsContainerTable tr:not(.header):hover {
+	background-color: var(--contentMainTableRowHover);
+}
+
+.playerStatsContainerTable td:not(.playerName) {
+	text-align: center;
+}
+
+.divisionTable td, .conferenceTable td {
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+
+.teamName:hover {
+	cursor: pointer;
+	text-shadow: 2px 2px 1px black;
+}
+
+.numeric {
+	text-align: center;
+}
+
+img {
+	width: 100%;
+	height: 100%;
+}
+
+/*.conferenceTable .ghost-highlight, .divisionTable .ghost-highlight, #playoffContainer .ghost-highlight {
+	background-color: var(--contentMainTableRowHover);
+}*/
+
+/*		table pagination		*/
+#tblNavigation {
+	color: var(--contentMainTableTextColor);
+	margin: 0 auto;
+	width: 95%;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+#tblNavigation div {
+	text-align: center;
+}
+
+#tblNavigation .tblArrow {
+	flex-grow: 4;
+	margin: 5px 0px;
+}
+
+#tblNavigation .tblArrow input {
+	width: 100%;
+	background: var(--contentMainTableBackground);
+	font-size: 24px;
+	cursor: pointer;
+}
+
+#tblNavigation .pageFormItem {
+	flex-grow: 1;
+}
+
+#tblNavigation #pageNum {
+	width: 30px;
+}
+
+#statsNavigation {
+	position: relative;
+}
+
+#tblPopupNav {
+	width: auto;
+	margin-top: 5px;
+	margin-left: 97%;
+	position: absolute;
+	text-align: right;
+	display: block;
+}
+
+#tblPopupNav input {
+	padding: 0px 2px;
+	font-size: 11px;
+	color: var(--contentMainTableTextColor);
+	cursor: pointer;
+	background: var(--contentMainTableBackground);
+	border-width: 0px;
+}
+
+#tblPopupNav input:hover {
+	background: var(--contentMainTableTextColor);
+	color: var(--contentMainTableBackground);
+	text-shadow: 0px 1px 1px black;
+}
+
+#orderSettings {
+	display: none;
+}

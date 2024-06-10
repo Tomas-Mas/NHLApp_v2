@@ -1,11 +1,15 @@
+const mainPageUrl = '/NHL/mainpage/';
+const statsPageUrl = '/NHL/stats/';
+const gamePageUrl = '/NHL/game/';
+
 function menuClicked(event) {
 	if(event.target.className === 'menulinks') {
 		var button = event.target.textContent;
 		if(button.includes('Home')) {
-			window.location.href = '/NHL/mainpage/' + getActiveSeason();
+			window.location.href = mainPageUrl + getActiveSeason();
 		}
 		else if(button.includes('Statistics')) {
-			window.location.href = '/NHL/stats/' + getActiveSeason();
+			window.location.href = statsPageUrl + getActiveSeason();
 		}
 	}
 }

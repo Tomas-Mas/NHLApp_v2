@@ -8,6 +8,6 @@ public interface GameBasicDataDAO {
 
 	public GameBasicDataView getById(int id);
 	public List<GameBasicDataView> getBySeasonWithPeriodGoals(int season);
-	public List<GameBasicDataView> getByGameAndTeams(int gameId, int team1Id, int team2Id);
+	public List<GameBasicDataView> getH2hByGame(int gameId);
 	public List<GameBasicDataView> getPlayoffBySeason(int season);
 }

@@ -1,0 +1,11 @@
+main {
+	display: flex;
+}
+
+#stats-section {
+	flex: 2;
+}
+
+#playoff-section {
+	flex: 1;
+}
