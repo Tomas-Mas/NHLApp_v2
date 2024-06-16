@@ -10,6 +10,7 @@ public class ExceptionHandlerController {
 	@ExceptionHandler(Exception.class)
 	public ModelAndView handleException(Exception exception) {
 		ModelAndView model = new ModelAndView();
+		exception.printStackTrace();
 		model.addObject("exceptionMessage", exception.getMessage());
 		model.setViewName("error/default-err");
 		return model;

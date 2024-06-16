@@ -32,8 +32,13 @@
 	align-items: center;
 }
 
-.team-info .team-name a:hover {
+.team-info div {
+	cursor: pointer;
+}
+
+.team-info .team-name:hover {
 	color: var(--contentMainTableRowHover);
+	font-weight: bold;
 }
 
 .result {

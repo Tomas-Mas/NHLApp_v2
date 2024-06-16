@@ -1,5 +1,7 @@
 package com.tom.nhl.dao;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -17,6 +19,7 @@ import com.tom.nhl.config.DefaultConstants;
 import com.tom.nhl.entity.Game;
 import com.tom.nhl.entity.Team;
 import com.tom.nhl.entity.view.GameBasicDataView;
+import com.tom.nhl.enums.RegulationScope;
 import com.tom.nhl.enums.SeasonScope;
 import com.tom.nhl.util.HibernateUtil;
 
@@ -115,6 +118,54 @@ public class JPAGameBasicDataDAO implements GameBasicDataDAO {
 		List<GameBasicDataView> playoffGames = em.createQuery(query).getResultList();
 		em.close();
 		return playoffGames;
+	}
+	
+	public List<GameBasicDataView> getLastGamesByAbr(int gameId, String teamAbr, RegulationScope regScope, int gamesCount) {
+		EntityManager em = HibernateUtil.createEntityManager();
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		
+		CriteriaQuery<GameBasicDataView> query = cb.createQuery(GameBasicDataView.class);
+		Root<GameBasicDataView> gameViewRoot = query.from(GameBasicDataView.class);
+		
+		Subquery<Integer> sqGameList = query.subquery(Integer.class);
+		Root<Game> gameRoot = sqGameList.from(Game.class);
+		gameRoot.join("homeTeam", JoinType.INNER);
+		gameRoot.join("awayTeam", JoinType.INNER);
+		
+		Subquery<Timestamp> sqGameDate = sqGameList.subquery(Timestamp.class);
+		Root<Game> sqGameRoot = sqGameDate.from(Game.class);
+		sqGameDate.select(sqGameRoot.<Timestamp>get("gameDate"))
+				.where(cb.equal(sqGameRoot.get("id"), gameId));
+		
+		List<Predicate> predicates = new ArrayList<Predicate>();
+		if(DefaultConstants.GAME_PAGE_LAST_GAMES_FROM_SELECTED_GAME) {
+			predicates.add(cb.lessThan(gameRoot.<Timestamp>get("gameDate"), sqGameDate));
+		}
+		
+		if(regScope == RegulationScope.OVERALL) {
+			predicates.add(cb.or(
+					cb.equal(gameRoot.get("homeTeam").get("abbreviation"), teamAbr),
+					cb.equal(gameRoot.get("awayTeam").get("abbreviation"), teamAbr)
+					));
+		} else if(regScope == RegulationScope.HOME) {
+			predicates.add(cb.equal(gameRoot.get("homeTeam").get("abbreviation"), teamAbr));
+		} else if(regScope == RegulationScope.AWAY) {
+			predicates.add(cb.equal(gameRoot.get("awayTeam").get("abbreviation"), teamAbr));
+		}
+		
+		sqGameList.select(gameRoot.<Integer>get("id"))
+		.where(predicates.toArray(new Predicate[] {}));
+		
+		query.select(gameViewRoot)
+		.where(cb.in(gameViewRoot.get("id")).value(sqGameList))
+		.orderBy(cb.desc(gameViewRoot.get("gameDate")));
+		
+		List<GameBasicDataView> games = em.createQuery(query)
+				.setMaxResults((gamesCount + DefaultConstants.GAME_PAGE_LAST_X_GAMES_COUNT))
+				.getResultList();
+		
+		em.close();
+		return games;
 	}
 
 	private List<GameBasicDataView> getBySeason(int season) {

@@ -1,0 +1,119 @@
+#h2h-last-games {
+	margin-bottom: 15px;
+}
+
+.last-games-header {
+	display: flex;
+	justify-content: center;
+}
+
+.last-games-header .header-pic {
+	flex-grow: 2;
+	display: flex;
+	justify-content: center;
+}
+
+.last-games-header .scope-selector {
+	flex-grow: 1;
+}
+
+.last-games-header img{
+	width: 100px;
+}
+
+.scope-selector {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+#last-games-data {
+	display: flex;
+	justify-content: space-between;
+}
+
+#last-games-data table {
+	background-color: var(--contentMainTableBackground);
+}
+
+/*games table*/
+.last-games-tbl tr{
+	display: flex;
+}
+
+.last-games-tbl tr.match-win, .last-games-tbl tr.match-otwin, .last-games-tbl tr.match-sowin {
+	background-image: linear-gradient(135deg, var(--matchWinnerColor) 25px, var(--contentMainTableBackground) 100px);
+}
+.last-games-tbl tr.match-loss {
+	background-image: linear-gradient(135deg, var(--matchLoserColor) 25px, var(--contentMainTableBackground) 100px);
+}
+.last-games-tbl tr.match-otloss, .last-games-tbl tr.match-soloss {
+	background-image: linear-gradient(135deg, var(--matchOtLoserColor) 25px, var(--contentMainTableBackground) 100px);
+}
+.last-games-tbl tr.match-tie {
+	background-image: linear-gradient(135deg, var(--matchTieColor) 25px, var(--contentMainTableBackground) 100px);
+}
+
+.last-games-tbl .match-result {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+.last-games-tbl .match-result .score {
+	flex-grow: 2;
+	font-size: 24px;
+	display: flex;
+	align-items: center;
+	align-content: center;
+}
+.last-games-tbl .match-result .end-type {
+	flex-grow: 2;
+	font-size: 10px;
+	display: flex;
+	align-content: flex-start;
+}
+
+.last-games-tbl .match-type {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+.last-games-tbl .match-type .match-scope {
+	flex-grow: 2;
+	font-size: 24px;
+	display: flex;
+	align-items: center;
+	align-content: center;
+}
+.last-games-tbl .match-type .match-date {
+	flex-grow: 2;
+	font-size: 10px;
+	display: flex;
+	align-content: flex-start;
+}
+
+.last-games-tbl .match-opponent {
+	display: flex;
+	align-items: center;
+}
+
+.opponent-img img{
+	width: 60px;
+}
+
+.last-games-nav{
+	width: 100%;
+	margin-top: 5px;
+	display: flex;
+	justify-content: center;
+}
+
+.last-games-nav #last-games-expand-btn{
+	background-color: var(--contentMainTableRowHover);
+	width: 100%;
+}
+
+.last-games-nav #last-games-expand-btn:hover{
+	background-color: var(--contentMainTableBackground);
+	cursor: pointer;
+}

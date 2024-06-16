@@ -3,6 +3,7 @@ const gameOverviewUrl = '/NHL/c/game/overview/' + gameId;
 const gameStatsUrl = '/NHL/c/game/stats/' + gameId;
 const gameMainSectionUrl = '/NHL/c/game/';
 const h2hUrl = '/NHL/c/game/h2h/' + gameId;
+const lastGamesUrl = '/NHL/c/game/lastGames/' + gameId;
 
 const canvasHeight = 10;
 const homeLineColor = "#000d1a";
@@ -16,7 +17,8 @@ document.onreadystatechange = function() {
 		}
 		
 		fetchMainSection();
-		fetchSidebarSection();
+		fetchLastGames();
+		fetchHeadToHead();
 		
 		document.getElementById('mainMenu').addEventListener('click', menuClicked);
 		document.getElementById('season').disabled = true;
@@ -41,6 +43,8 @@ function fetchMainSection() {
 		.then(data => document.getElementById('main-section').innerHTML = data)
 		.then(() => {
 			setMainSectionEvents();
+			
+			//stats only events(drawing lines and period submenu events)
 			if(window.location.hash === '#stats') {
 				let periodMenuList = document.querySelectorAll('#period-nav span');
 				for(let i = 0; i < periodMenuList.length; i++) {
@@ -58,10 +62,38 @@ function fetchMainSection() {
 		.catch(err => console.log(err));
 }
 
-function fetchSidebarSection() {
+function fetchLastGames(event) {
+	let url = lastGamesUrl;
+	let formData = document.getElementById('last-games-form');
+	
+	if(formData != null) {
+		let params = new URLSearchParams();
+		new FormData(formData).forEach((value, key) => {
+			params.append(key, value);
+		});
+		url += '?' + params;
+	}
+	
+	if(event != undefined && event.target.id === 'last-games-expand-btn') {
+		url += '&homeGamesCount=' + document.querySelectorAll('#last-games-data .last-games-tbl')[0].querySelectorAll('tr').length;
+		url += '&awayGamesCount=' + document.querySelectorAll('#last-games-data .last-games-tbl')[1].querySelectorAll('tr').length;
+	}
+	
+	fetch(url)
+		.then(response => response.text())
+		.then(data => document.getElementById('h2h-last-games').innerHTML = data)
+		.then(() => {
+			document.getElementById('last-games-expand-btn').addEventListener('click', fetchLastGames);
+			document.getElementById('homeScope').addEventListener('change', fetchLastGames);
+			document.getElementById('awayScope').addEventListener('change', fetchLastGames);
+		})
+		.catch(err => console.log(err));
+}
+
+function fetchHeadToHead() {
 	fetch(h2hUrl)
 		.then(response => response.text())
-		.then(data => document.getElementById('right-sidebar-section').innerHTML = data)
+		.then(data =>	document.getElementById('head2head-section').innerHTML += data)
 		.then(() => {
 			document.querySelectorAll('.h2h-game').forEach((game) => {
 				game.addEventListener('mousedown', (event) => {
@@ -69,7 +101,6 @@ function fetchSidebarSection() {
 					if(event.button === 1) {
 						window.open(targetUrl, '_blank');
 					} else if(event.button === 0 && !game.classList.contains('selected')) {
-						//TODO add last x game to h2h list and lock sidebar as navigation and only reload main section
 						window.location.href = targetUrl;
 					}
 				});
@@ -79,6 +110,7 @@ function fetchSidebarSection() {
 }
 
 function setMainSectionEvents() {
+	//submenu
 	document.querySelectorAll('#submenu span').forEach((element) => {
 		element.addEventListener('mousedown', (event) => {
 			if(event.button === 0) {
@@ -89,6 +121,14 @@ function setMainSectionEvents() {
 				}
 				//fetchMainSection();
 			}
+		});
+	});
+	
+	//game header
+	document.querySelectorAll('.team-info div').forEach((element) => {
+		element.addEventListener('click', () => {
+			let teamAbr = element.parentElement.id.substr(element.parentElement.id.indexOf('-') + 1);
+			window.location.href = teamPageUrl + teamAbr;
 		});
 	});
 }

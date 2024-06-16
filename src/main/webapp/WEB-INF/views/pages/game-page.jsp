@@ -11,6 +11,7 @@
 	<link rel="stylesheet" type="text/css" href="/NHL/src/css/components/game-keyevents-td.css">
 	<link rel="stylesheet" type="text/css" href="/NHL/src/css/components/game-h2h.css">
 	<link rel="stylesheet" type="text/css" href="/NHL/src/css/components/game-stats.css">
+	<link rel="stylesheet" type="text/css" href="/NHL/src/css/components/game-last-games.css">
 	
 	<link rel="stylesheet" type="text/css" href="/NHL/src/css/sub_components/game-submenu.css">
 	<link rel="stylesheet" type="text/css" href="/NHL/src/css/sub_components/game-header.css">
@@ -27,7 +28,11 @@
 	
 		<div id="main-section"></div>
 		
-		<div id="right-sidebar-section"></div>
+		<div id="right-sidebar-section">
+			<div id="head2head-section">
+				<div id="h2h-last-games" class="h2h-section"></div>
+			</div>
+		</div>
 		
 	</main>
 	

@@ -1,11 +1,14 @@
 package com.tom.nhl.dao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.Subgraph;
+import javax.persistence.Tuple;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -52,6 +55,28 @@ public class JPAGameDAO implements GameDAO {
 		Integer season = em.createQuery(query).getSingleResult();
 		em.close();
 		return season;
+	}
+	
+	public Map<String, String> getTeamsByGameId(int gameId) {
+		Map<String, String> teamsMap = new HashMap<String, String>();
+		EntityManager em = HibernateUtil.createEntityManager();
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		
+		CriteriaQuery<Tuple> query = cb.createTupleQuery();
+		Root<Game> gameRoot = query.from(Game.class);
+		gameRoot.join("homeTeam", JoinType.INNER);
+		gameRoot.join("awayTeam", JoinType.INNER);
+		
+		query.select(cb.tuple(gameRoot.get("homeTeam").<String>get("abbreviation").alias("homeAbr"), gameRoot.get("awayTeam").<String>get("abbreviation").alias("awayAbr")))
+			.where(cb.equal(gameRoot.get("id"), gameId));
+		
+		Tuple result = em.createQuery(query).getSingleResult();
+		
+		em.close();
+		
+		teamsMap.put("homeAbr", result.get("homeAbr", String.class));
+		teamsMap.put("awayAbr", result.get("awayAbr", String.class));
+		return teamsMap;
 	}
 	
 	////////////////////////////////////////////////////////

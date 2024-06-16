@@ -32,4 +32,8 @@ body {
 	
 	--contentMainTableMatchData: #0a1b29;
 	
+	--matchWinnerColor: #009900;
+	--matchLoserColor: #cc0000;
+	--matchOtLoserColor: #ff751a;
+	--matchTieColor: #ffc266;
 }

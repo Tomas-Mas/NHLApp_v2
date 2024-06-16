@@ -1,6 +1,7 @@
 const mainPageUrl = '/NHL/mainpage/';
 const statsPageUrl = '/NHL/stats/';
 const gamePageUrl = '/NHL/game/';
+const teamPageUrl = '/NHL/team/';
 
 function menuClicked(event) {
 	if(event.target.className === 'menulinks') {

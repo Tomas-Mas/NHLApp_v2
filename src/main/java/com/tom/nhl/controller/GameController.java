@@ -5,11 +5,14 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.tom.nhl.dto.LastGamesNavigationDTO;
+import com.tom.nhl.enums.RegulationScope;
 import com.tom.nhl.service.GameBasicDataService;
 import com.tom.nhl.service.GameEventService;
 import com.tom.nhl.service.GameStatsService;
@@ -46,6 +49,14 @@ public class GameController {
 		ModelAndView model = new ModelAndView();
 		model.addObject("headToHead", gameBasicDataService.getHeadToHeadMapByGame(gameId));
 		model.setViewName("components/game-h2h");
+		return model;
+	}
+	
+	@RequestMapping(value = "lastGames/{gameId}", method = RequestMethod.GET)
+	public ModelAndView getLastGames(@PathVariable int gameId, @ModelAttribute("lastGamesNavigation") LastGamesNavigationDTO navigation) {
+		ModelAndView model = new ModelAndView();
+		model.addObject("lastGamesMap", gameBasicDataService.getLastGamesByGameId(gameId, navigation));
+		model.setViewName("components/game-last-games");
 		return model;
 	}
 	

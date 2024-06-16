@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.tom.nhl.enums.RegulationScope;
 import com.tom.nhl.service.GameBasicDataService;
 import com.tom.nhl.service.GameEventService;
 import com.tom.nhl.service.GameService;
@@ -38,7 +39,7 @@ public class GamePageController {
 		return model;
 	}
 
-	@RequestMapping("{gameId}/overview")
+	/*@RequestMapping("{gameId}/overview")
 	public ModelAndView loadOverview(@PathVariable int gameId) {
 		ModelAndView model = new ModelAndView();
 		
@@ -78,5 +79,5 @@ public class GamePageController {
 		
 		model.setViewName("game_page/game-stats");
 		return model;
-	}
+	}*/
 }
