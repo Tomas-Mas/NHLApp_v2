@@ -23,6 +23,10 @@
 				<form:option value="Away" label="Away"/>
 			</form:select>
 		</div>
+		<div class="nav-lock">
+			<label for="nav-locker">&#128274;</label>
+			<input type="checkbox" id="nav-locker" title="check this to lock sidebar to current game">
+		</div>
 		<div class="scope-selector">
 			<form:select path="awayScope">
 				<form:option value="Overall" label="All"/>
@@ -90,7 +94,7 @@
 					</c:otherwise>
 				</c:choose>
 				
-				<tr class="${gameResultClass}">
+				<tr id="${game.id}" class="${gameResultClass}">
 					<td class="match-result">
 						<c:choose>
 							<c:when test="${game.homeTeamAbr == homeAbr}">
@@ -186,7 +190,7 @@
 					</c:otherwise>
 				</c:choose>
 				
-				<tr class="${gameResultClass}">
+				<tr id="${game.id}" class="${gameResultClass}">
 					<td class="match-result">
 						<c:choose>
 							<c:when test="${game.homeTeamAbr == awayAbr}">

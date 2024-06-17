@@ -1,4 +1,4 @@
-const gameId = window.location.pathname.substr(window.location.pathname.lastIndexOf('/') + 1);
+var gameId = window.location.pathname.substr(window.location.pathname.lastIndexOf('/') + 1);
 const gameOverviewUrl = '/NHL/c/game/overview/' + gameId;
 const gameStatsUrl = '/NHL/c/game/stats/' + gameId;
 const gameMainSectionUrl = '/NHL/c/game/';
@@ -36,33 +36,24 @@ function fetchMainSection() {
 	}
 	
 	let url = gameMainSectionUrl + window.location.hash.substr(1) + '/' + gameId + '/' + period;
-	//console.log('fetching url: ' + url);
 	
 	fetch(url)
 		.then(response => response.text())
 		.then(data => document.getElementById('main-section').innerHTML = data)
-		.then(() => {
-			setMainSectionEvents();
-			
-			//stats only events(drawing lines and period submenu events)
-			if(window.location.hash === '#stats') {
-				let periodMenuList = document.querySelectorAll('#period-nav span');
-				for(let i = 0; i < periodMenuList.length; i++) {
-					let periodSpan = periodMenuList[i];
-					periodSpan.addEventListener('click', () => {
-						if(!periodSpan.classList.contains('selected')) {
-							history.replaceState({periodNum: i}, '');
-							fetchMainSection();
-						}
-					});
-				}
-				drawStatLines();
-			}
-		})
+		.then(setMainSectionEvents)
 		.catch(err => console.log(err));
 }
 
 function fetchLastGames(event) {
+	let locker = document.getElementById('nav-locker');
+	if(locker && locker.checked) {
+		document.querySelector('.last-games-header .nav-lock').classList.add('alrt');
+		setTimeout(() => {
+			document.querySelector('.last-games-header .nav-lock').classList.remove('alrt');
+		}, 1000);
+		return;
+	}
+	
 	let url = lastGamesUrl;
 	let formData = document.getElementById('last-games-form');
 	
@@ -86,6 +77,41 @@ function fetchLastGames(event) {
 			document.getElementById('last-games-expand-btn').addEventListener('click', fetchLastGames);
 			document.getElementById('homeScope').addEventListener('change', fetchLastGames);
 			document.getElementById('awayScope').addEventListener('change', fetchLastGames);
+			
+			document.getElementById('nav-locker').addEventListener('change', (event) => {
+				if(!event.target.checked && gameId != window.location.pathname.substr(window.location.pathname.lastIndexOf('/') + 1)) {
+					window.location.href = gamePageUrl + gameId + window.location.hash;
+				}
+				
+				if(event.target.checked) {
+					document.getElementById('homeScope').disabled = true;
+					document.getElementById('awayScope').disabled = true;
+				} else {
+					document.getElementById('homeScope').disabled = false;
+					document.getElementById('awayScope').disabled = false;
+				}
+			});
+			
+			document.querySelectorAll('.last-games-tbl tr').forEach((gameRow) => {
+				gameRow.addEventListener('mousedown', (event) => {
+					let targetUrl = gamePageUrl + gameRow.id + window.location.hash;
+					if(event.button === 1) {
+						window.open(targetUrl, '_blank');
+					} else if(event.button === 0) {
+						if(document.getElementById('nav-locker').checked) {
+							gameId = gameRow.id;
+							fetchMainSection();
+							
+							let selectedGame = document.querySelector('#last-games-data tr.selected');
+							if(selectedGame) 
+								selectedGame.classList.remove('selected');
+							gameRow.classList.add('selected');
+						} else {
+						window.location.href = targetUrl;
+						}
+					}
+				});
+			});
 		})
 		.catch(err => console.log(err));
 }
@@ -101,7 +127,14 @@ function fetchHeadToHead() {
 					if(event.button === 1) {
 						window.open(targetUrl, '_blank');
 					} else if(event.button === 0 && !game.classList.contains('selected')) {
+						if(document.getElementById('nav-locker').checked) {
+							gameId = game.id;
+							fetchMainSection();
+							document.querySelector('.h2h-game.selected').classList.remove('selected');
+							game.classList.add('selected');
+						} else {
 						window.location.href = targetUrl;
+						}
 					}
 				});
 			});
@@ -131,6 +164,21 @@ function setMainSectionEvents() {
 			window.location.href = teamPageUrl + teamAbr;
 		});
 	});
+	
+	//stats only events(drawing lines and period submenu events)
+	if (window.location.hash === '#stats') {
+		let periodMenuList = document.querySelectorAll('#period-nav span');
+		for (let i = 0; i < periodMenuList.length; i++) {
+			let periodSpan = periodMenuList[i];
+			periodSpan.addEventListener('click', () => {
+				if (!periodSpan.classList.contains('selected')) {
+					history.replaceState({ periodNum: i }, '');
+					fetchMainSection();
+				}
+			});
+		}
+		drawStatLines();
+	}
 }
 
 function drawStatLines() {

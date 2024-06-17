@@ -27,6 +27,25 @@
 	justify-content: center;
 }
 
+.nav-lock.alrt {
+	border: 10px solid red;
+	transition: border 1s;
+}
+
+.nav-lock {
+	position: absolute;
+	display: flex;
+}
+
+.nav-lock label {
+	font-size: 10px;
+	padding-bottom: 2px;
+}
+
+.nav-lock input {
+	margin: 0;
+}
+
 #last-games-data {
 	display: flex;
 	justify-content: space-between;
@@ -37,8 +56,12 @@
 }
 
 /*games table*/
-.last-games-tbl tr{
+.last-games-tbl tr {
 	display: flex;
+}
+
+.last-games-tbl tr.selected {
+	box-shadow: inset 0px 0px 0px 3px var(--contentMainTableRowLine);
 }
 
 .last-games-tbl tr.match-win, .last-games-tbl tr.match-otwin, .last-games-tbl tr.match-sowin {
@@ -52,6 +75,23 @@
 }
 .last-games-tbl tr.match-tie {
 	background-image: linear-gradient(135deg, var(--matchTieColor) 25px, var(--contentMainTableBackground) 100px);
+}
+
+.last-games-tbl tr.match-win:hover, .last-games-tbl tr.match-otwin:hover, .last-games-tbl tr.match-sowin:hover {
+	background-image: linear-gradient(135deg, var(--matchWinnerColor) 25px, var(--contentMainTableRowHover) 100px);
+	cursor: pointer;
+}
+.last-games-tbl tr.match-loss:hover {
+	background-image: linear-gradient(135deg, var(--matchLoserColor) 25px, var(--contentMainTableRowHover) 100px);
+	cursor: pointer;
+}
+.last-games-tbl tr.match-otloss:hover, .last-games-tbl tr.match-soloss:hover {
+	background-image: linear-gradient(135deg, var(--matchOtLoserColor) 25px, var(--contentMainTableRowHover) 100px);
+	cursor: pointer;
+}
+.last-games-tbl tr.match-tie:hover {
+	background-image: linear-gradient(135deg, var(--matchTieColor) 25px, var(--contentMainTableRowHover) 100px);
+	cursor: pointer;
 }
 
 .last-games-tbl .match-result {
