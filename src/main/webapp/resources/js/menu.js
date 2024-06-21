@@ -3,6 +3,9 @@ const statsPageUrl = '/NHL/stats/';
 const gamePageUrl = '/NHL/game/';
 const teamPageUrl = '/NHL/team/';
 
+const downArrStr = '\u2193';
+const upArrStr = '\u2191';
+
 function menuClicked(event) {
 	if(event.target.className === 'menulinks') {
 		var button = event.target.textContent;

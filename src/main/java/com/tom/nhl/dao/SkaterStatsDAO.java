@@ -2,6 +2,7 @@ package com.tom.nhl.dao;
 
 import java.util.List;
 
+import com.tom.nhl.dto.PlayerStatsFilterDTO;
 import com.tom.nhl.dto.SkaterStatsDTO;
 import com.tom.nhl.dto.StatsNavigationDTO;
 import com.tom.nhl.enums.RegulationScope;
@@ -11,4 +12,5 @@ public interface SkaterStatsDAO {
 
 	public int getCount(int season, SeasonScope seasonScope, RegulationScope regulationScope);
 	public List<SkaterStatsDTO> getBySeasonAndNavigationDTO(int season, StatsNavigationDTO statsNavigation);
+	public List<SkaterStatsDTO> getByGameId(int gameId, PlayerStatsFilterDTO statsFilter);
 }

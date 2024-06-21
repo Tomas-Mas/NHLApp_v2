@@ -8,10 +8,12 @@
 	<link rel="stylesheet" type="text/css" href="/NHL/src/css/root.css">
 	<link rel="stylesheet" type="text/css" href="/NHL/src/css/sub_components/main-menu.css">
 	<link rel="stylesheet" type="text/css" href="/NHL/src/css/pages/game-page.css">
+	
 	<link rel="stylesheet" type="text/css" href="/NHL/src/css/components/game-keyevents-td.css">
 	<link rel="stylesheet" type="text/css" href="/NHL/src/css/components/game-h2h.css">
 	<link rel="stylesheet" type="text/css" href="/NHL/src/css/components/game-stats.css">
 	<link rel="stylesheet" type="text/css" href="/NHL/src/css/components/game-last-games.css">
+	<link rel="stylesheet" type="text/css" href="/NHL/src/css/components/game-players-stats.css">
 	
 	<link rel="stylesheet" type="text/css" href="/NHL/src/css/sub_components/game-submenu.css">
 	<link rel="stylesheet" type="text/css" href="/NHL/src/css/sub_components/game-header.css">

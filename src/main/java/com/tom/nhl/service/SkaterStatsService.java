@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.tom.nhl.dao.SkaterStatsDAO;
+import com.tom.nhl.dto.PlayerStatsFilterDTO;
 import com.tom.nhl.dto.SkaterStatsDTO;
 import com.tom.nhl.dto.StatsNavigationDTO;
 import com.tom.nhl.enums.RegulationScope;
@@ -27,5 +28,9 @@ public class SkaterStatsService {
 	
 	public List<SkaterStatsDTO> getBySeasonAndNavigationDTO(int season, StatsNavigationDTO statsNavigation) {
 		return skaterStatsDAO.getBySeasonAndNavigationDTO(season, statsNavigation);
+	}
+	
+	public List<SkaterStatsDTO> getByGameId(int gameId, PlayerStatsFilterDTO statsFilter) {
+		return skaterStatsDAO.getByGameId(gameId, statsFilter);
 	}
 }

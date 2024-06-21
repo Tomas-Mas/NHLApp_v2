@@ -1,0 +1,53 @@
+#player-filter {
+	color: var(--contentMainTableRowLine);
+	font-size: 14px;
+	display: flex;
+	column-gap: 35px;
+	margin-top: 20px;
+}
+
+#player-filter select {
+	width: 60px;
+}
+
+#player-filter .form-checkbox-cont {
+	display: flex;
+}
+
+.player-stats-tbl {
+	width: 100%;
+	margin-top: 10px;
+	border-collapse: collapse;
+	color: var(--contentMainTableTextColor);
+	background-color: var(--contentMainTableBackground);
+}
+
+.player-stats-tbl td:not(.player-name) {
+	text-align: center;
+}
+
+.player-stats-tbl th {
+	background-color: var(--htmlBackground);
+}
+
+.player-stats-tbl span, .player-stats-tbl img {
+	padding-left: 2px;
+	padding-right: 2px;
+	cursor: pointer;
+}
+
+.player-stats-tbl .player-name span:hover {
+	text-shadow: 2px 2px 1px black;
+}
+
+.player-stats-tbl th span:hover {
+	text-shadow: 1px 1px 1px var(--contentMainTableTextColor);
+}
+
+.player-stats-tbl tr:hover {
+	background-color: var(--contentMainTableRowHover);
+}
+
+.player-stats-tbl img {
+	width: 20px;
+}

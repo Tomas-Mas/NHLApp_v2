@@ -7,15 +7,21 @@ import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 
 import org.springframework.stereotype.Component;
 
+import com.tom.nhl.dto.PlayerStatsFilterDTO;
 import com.tom.nhl.dto.SkaterStatsDTO;
 import com.tom.nhl.dto.StatsNavigationDTO;
+import com.tom.nhl.entity.Game;
 import com.tom.nhl.entity.Player;
 import com.tom.nhl.entity.view.SkaterStatsPerGame;
+import com.tom.nhl.enums.PlayerPosition;
 import com.tom.nhl.enums.RegulationScope;
 import com.tom.nhl.enums.SeasonScope;
 import com.tom.nhl.util.HibernateUtil;
@@ -39,6 +45,138 @@ public class JPASkaterStatsDAO implements SkaterStatsDAO {
 		Integer statCount = em.createQuery(query).getResultList().size();
 		em.close();
 		return statCount.intValue();
+	}
+	
+	public List<SkaterStatsDTO> getByGameId(int gameId, PlayerStatsFilterDTO statsFilter) {
+		EntityManager em = HibernateUtil.createEntityManager();
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		
+		CriteriaQuery<SkaterStatsDTO> query = cb.createQuery(SkaterStatsDTO.class);
+		Root<SkaterStatsPerGame> statsRoot = query.from(SkaterStatsPerGame.class);
+		statsRoot.fetch("id", JoinType.INNER);
+		
+		//home abbreviation subquery
+		Subquery<String> sqHomeTeam = query.subquery(String.class);
+		Root<Game> gameRootHome = sqHomeTeam.from(Game.class);
+		gameRootHome.join("homeTeam", JoinType.INNER);
+		sqHomeTeam.select(gameRootHome.get("homeTeam").<String>get("abbreviation"))
+				.where(cb.equal(gameRootHome, gameId));
+		
+		//away abbreviation subquery
+		Subquery<String> sqAwayTeam = query.subquery(String.class);
+		Root<Game> gameRootAway = sqAwayTeam.from(Game.class);
+		gameRootAway.join("awayTeam", JoinType.INNER);
+		sqAwayTeam.select(gameRootAway.get("awayTeam").<String>get("abbreviation"))
+				.where(cb.equal(gameRootAway, gameId));
+		
+		List<Expression<?>> selectExp = new ArrayList<Expression<?>>();
+		selectExp.add(statsRoot.get("id").<Integer>get("playerId"));
+		selectExp.add(statsRoot.<String>get("firstName"));
+		selectExp.add(statsRoot.<String>get("lastName"));
+		selectExp.add(statsRoot.<String>get("position"));
+		selectExp.add(cb.selectCase(statsRoot.<String>get("team"))
+				.when("home", sqHomeTeam)
+				.when("away", sqAwayTeam)
+				.otherwise("Unknown"));
+		selectExp.add(statsRoot.<Integer>get("goals"));
+		selectExp.add(statsRoot.<Integer>get("assists"));
+		selectExp.add(statsRoot.<Integer>get("points"));
+		selectExp.add(statsRoot.<Integer>get("plusMinus"));
+		selectExp.add(statsRoot.<Integer>get("pim"));
+		selectExp.add(statsRoot.<Integer>get("shots"));
+		selectExp.add(statsRoot.<Integer>get("blockedShots"));
+		selectExp.add(statsRoot.<Integer>get("timeOnIce"));
+		selectExp.add(statsRoot.<Integer>get("faceoffs"));
+		selectExp.add(statsRoot.<Integer>get("faceoffsWon"));
+		
+		Expression<Object> faceoffsPercentageExp = cb.selectCase(statsRoot.<Integer>get("faceoffs"))
+				.when(0, -1.0f)
+				.otherwise(statsRoot.<Float>get("faceoffsPercentage"));
+		selectExp.add(faceoffsPercentageExp);
+		
+		List<Predicate> predicates = new ArrayList<Predicate>();
+		predicates.add(cb.equal(statsRoot.get("id").get("gameId"), gameId));
+		
+		if(statsFilter.getOnlyProductive()) {
+			predicates.add(cb.gt(statsRoot.<Integer>get("points"), 0));
+		}
+		if(statsFilter.getPlayerPositionEnum() != PlayerPosition.SKATERS) {
+			predicates.add(cb.equal(statsRoot.<String>get("position"), statsFilter.getPlayerPosition()));
+		}
+		if(statsFilter.getRegulationScopeEnum() != RegulationScope.OVERALL) {
+			predicates.add(cb.equal(statsRoot.<String>get("team"), statsFilter.getRegulationScopeEnum().getValue()));
+		}
+		
+		List<Order> orderList = new ArrayList<Order>();
+		boolean descOrder = statsFilter.getIsDescOrder();
+		
+		switch(statsFilter.getOrderByColumnEnum()) {
+		case GOALS:
+			orderList.add(descOrder ? cb.desc(statsRoot.get("goals")) : cb.asc(statsRoot.get("goals")));
+			orderList.add(descOrder ? cb.desc(statsRoot.get("points")) : cb.asc(statsRoot.get("points")));
+			break;
+		case ASSISTS:
+			orderList.add(descOrder ? cb.desc(statsRoot.get("assists")) : cb.asc(statsRoot.get("assists")));
+			orderList.add(descOrder ? cb.desc(statsRoot.get("goals")) : cb.asc(statsRoot.get("goals")));
+			break;
+		case POINTS:
+			orderList.add(descOrder ? cb.desc(statsRoot.get("points")) : cb.asc(statsRoot.get("points")));
+			orderList.add(descOrder ? cb.desc(statsRoot.get("goals")) : cb.asc(statsRoot.get("goals")));
+			break;
+		case TEAM:
+			orderList.add(descOrder ? cb.desc(statsRoot.get("team")) : cb.asc(statsRoot.get("team")));
+			orderList.add(cb.desc(statsRoot.get("points")));
+			orderList.add(cb.desc(statsRoot.get("goals")));
+			break;
+		case PLAYERNAME:
+			orderList.add(!descOrder ? cb.desc(statsRoot.get("lastName")) : cb.asc(statsRoot.get("lastName")));
+			orderList.add(!descOrder ? cb.desc(statsRoot.get("firstName")) : cb.asc(statsRoot.get("firstName")));
+			break;
+		case PLAYERPOSITION:
+			orderList.add(!descOrder ? cb.desc(statsRoot.get("position")) : cb.asc(statsRoot.get("position")));
+			orderList.add(cb.desc(statsRoot.get("points")));
+			orderList.add(cb.desc(statsRoot.get("goals")));
+			break;
+		case PLUSMINUS:
+			orderList.add(descOrder ? cb.desc(statsRoot.get("plusMinus")) : cb.asc(statsRoot.get("plusMinus")));
+			orderList.add(cb.desc(statsRoot.get("points")));
+			orderList.add(cb.desc(statsRoot.get("goals")));
+			break;
+		case PENALTYMINUTES:
+			orderList.add(descOrder ? cb.desc(statsRoot.get("pim")) : cb.asc(statsRoot.get("pim")));
+			break;
+		case SHOTS:
+			orderList.add(descOrder ? cb.desc(statsRoot.get("shots")) : cb.asc(statsRoot.get("shots")));
+			orderList.add(cb.desc(statsRoot.get("points")));
+			orderList.add(cb.desc(statsRoot.get("goals")));
+			break;
+		case BLOCKEDSHOTS:
+			orderList.add(descOrder ? cb.desc(statsRoot.get("blockedShots")) : cb.asc(statsRoot.get("blockedShots")));
+			orderList.add(cb.desc(statsRoot.get("points")));
+			orderList.add(cb.desc(statsRoot.get("goals")));
+			break;
+		case TIMEONICE:
+			orderList.add(descOrder ? cb.desc(statsRoot.get("timeOnIce")) : cb.asc(statsRoot.get("timeOnIce")));
+			break;
+		case FACEOFFSOVERALL:
+			orderList.add(descOrder ? cb.desc(statsRoot.get("faceoffs")) : cb.asc(statsRoot.get("faceoffs")));
+			break;
+		case FACEOFFSPERCENTAGE:
+			orderList.add(descOrder ? cb.desc(faceoffsPercentageExp) : cb.asc(faceoffsPercentageExp));
+			orderList.add(descOrder ? cb.desc(statsRoot.get("faceoffs")) : cb.asc(statsRoot.get("faceoffs")));
+			break;
+		default:
+			orderList.add(descOrder ? cb.desc(statsRoot.get("points")) : cb.asc(statsRoot.get("points")));
+			orderList.add(descOrder ? cb.desc(statsRoot.get("goals")) : cb.asc(statsRoot.get("goals")));
+		}
+		
+		query.select(cb.construct(SkaterStatsDTO.class, selectExp.toArray(new Expression<?>[] {})))
+				.where(predicates.toArray(new Predicate[] {}))
+				.orderBy(orderList);
+		
+		List<SkaterStatsDTO> stats = em.createQuery(query).getResultList();
+		
+		return stats;
 	}
 
 	public List<SkaterStatsDTO> getBySeasonAndNavigationDTO(int season, StatsNavigationDTO statsNavigation) {

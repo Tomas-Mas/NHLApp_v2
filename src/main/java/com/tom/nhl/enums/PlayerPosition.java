@@ -5,7 +5,8 @@ public enum PlayerPosition {
 	LEFT_WING("Left Wing", "LW"),
 	CENTER("Center", "C"),
 	DEFENSEMAN("Defenseman", "D"),
-	GOALIE("Goalie", "G");
+	GOALIE("Goalie", "G"),
+	SKATERS("Skaters", "-");
 	
 	private String name;
 	private String abbr;

@@ -6,11 +6,13 @@ public class SkaterStatsDTO {
 	
 	private int season;
 	private String gameType;
+	private String team;
 	private int playerId;
 	private String firstName;
 	private String lastName;
 	private PlayerPosition position;
 	private int gamesPlayed;
+	private String timeOnIce;
 	private String timeOnIceAvg;
 	private int plusMinus;
 	private int goals;
@@ -28,11 +30,13 @@ public class SkaterStatsDTO {
 	private int blockedShots;
 	private int faceoffs;
 	private int faceoffsWon;
+	private String faceoffsPercentage;
 	private int hits;
 	private int hitsTaken;
 	private int takeaway;
 	private int giveaway;
 	
+	//season stats
 	public SkaterStatsDTO(int season, String gameType, int playerId, String firstName, String lastName, String position, long gamesPlayed, double timeOnIceAvg,
 			long plusMinus, long goals, long assists, long points, long ppGoals, long ppPoints, long shGoals, long shPoints, long otGoals,
 			long shootoutTaken, long shootoutGoals, long penaltyMinutes, long shots, long blockedShots, long faceoffs, long faceoffsWon,
@@ -66,6 +70,27 @@ public class SkaterStatsDTO {
 		this.takeaway = (int) takeaway;
 		this.giveaway = (int) giveaway;
 	}
+	
+	//game stats
+	public SkaterStatsDTO(int playerId, String firstName, String lastName, String position, String team, int goals, int assists, 
+			int points, int plusMinus, int pim, int shots, int blockedShots, int timeOnIce, int faceoffs, int faceoffsWon, float faceoffsPercentage) {
+		this.playerId = playerId;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.position = PlayerPosition.valueOfName(position);
+		this.team = team;
+		this.goals = goals;
+		this.assists = assists;
+		this.points = points;
+		this.plusMinus = plusMinus;
+		this.penaltyMinutes = pim;
+		this.shots = shots;
+		this.blockedShots = blockedShots;
+		this.timeOnIce = timeOnIceToString(timeOnIce);
+		this.faceoffs = faceoffs;
+		this.faceoffsWon = faceoffsWon;
+		this.faceoffsPercentage = faceoffsPercentage < 0 ? "--" : String.valueOf(faceoffsPercentage);
+	}
 
 	public int getSeason() {
 		return season;
@@ -81,6 +106,14 @@ public class SkaterStatsDTO {
 
 	public void setGameType(String gameType) {
 		this.gameType = gameType;
+	}
+	
+	public String getTeam() {
+		return team;
+	}
+	
+	public void setTeam(String team) {
+		this.team = team;
 	}
 
 	public int getPlayerId() {
@@ -121,6 +154,14 @@ public class SkaterStatsDTO {
 
 	public void setGamesPlayed(int gamesPlayed) {
 		this.gamesPlayed = gamesPlayed;
+	}
+	
+	public String getTimeOnIce() {
+		return timeOnIce;
+	}
+	
+	public void setTimeOnIce(String timeOnIce) {
+		this.timeOnIce = timeOnIce;
 	}
 	
 	public String getTimeOnIceAvg() {
@@ -257,6 +298,14 @@ public class SkaterStatsDTO {
 
 	public void setFaceoffsWon(int faceoffsWon) {
 		this.faceoffsWon = faceoffsWon;
+	}
+	
+	public String getFaceoffsPercentage() {
+		return faceoffsPercentage;
+	}
+	
+	public void setFaceoffsPercentage(String faceoffsPercentage) {
+		this.faceoffsPercentage = faceoffsPercentage;
 	}
 
 	public int getHits() {

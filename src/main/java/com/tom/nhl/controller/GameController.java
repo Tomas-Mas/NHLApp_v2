@@ -12,10 +12,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.tom.nhl.dto.LastGamesNavigationDTO;
-import com.tom.nhl.enums.RegulationScope;
+import com.tom.nhl.dto.PlayerStatsFilterDTO;
 import com.tom.nhl.service.GameBasicDataService;
 import com.tom.nhl.service.GameEventService;
 import com.tom.nhl.service.GameStatsService;
+import com.tom.nhl.service.SkaterStatsService;
 
 @Controller
 @RequestMapping("/c/game")
@@ -27,6 +28,8 @@ public class GameController {
 	GameEventService gameEventService;
 	@Autowired
 	GameStatsService gameStatsService;
+	@Autowired
+	SkaterStatsService skaterStatsService;
 	
 	@RequestMapping(value = "/list/{season}", method = RequestMethod.GET)
 	public ModelAndView getListBySeason(@PathVariable int season) {
@@ -88,6 +91,18 @@ public class GameController {
 		model.addObject("gameStatsMap", gameStatsService.getByIdAndPeriod(gameId, periodNum.orElse(0)));
 		
 		model.setViewName("components/game-stats");
+		return model;
+	}
+	
+	@RequestMapping(value = "/players/{gameId}", method = RequestMethod.GET)
+	public ModelAndView getPlayerStats(@PathVariable int gameId, @ModelAttribute("playerStatsFilter") PlayerStatsFilterDTO statsFilter) {
+		ModelAndView model = new ModelAndView();
+		
+		model.addObject("pageNavigation", "PlayersStats");
+		model.addObject("gameData", gameBasicDataService.getById(gameId));
+		model.addObject("skaterStats", skaterStatsService.getByGameId(gameId, statsFilter));
+		
+		model.setViewName("components/game-players-stats");
 		return model;
 	}
 }

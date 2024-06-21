@@ -24,5 +24,13 @@
 		</c:otherwise>
 	</c:choose>
 	
-	<span>Player Stats</span>
+	<c:choose>
+		<c:when test="${pageNavigation == 'PlayersStats'}">
+			<span class="selected">Players Stats</span></c:when>
+		<c:otherwise>
+			<span>Players Stats</span>
+		</c:otherwise>
+	</c:choose>
+	
+	<span>Simulation</span>
 </div>

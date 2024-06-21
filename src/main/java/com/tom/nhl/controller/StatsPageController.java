@@ -8,19 +8,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.tom.nhl.dto.StatsNavigationDTO;
-import com.tom.nhl.enums.DataScope;
 import com.tom.nhl.service.GameService;
-import com.tom.nhl.service.SkaterStatsService;
-import com.tom.nhl.service.TeamStatsService;
 
 @Controller
 @RequestMapping("/stats")
 public class StatsPageController {
 
-	@Autowired
-	private TeamStatsService teamStatsService;
-	@Autowired
-	private SkaterStatsService skaterStatsService;
 	@Autowired
 	private GameService gameService;
 	
@@ -29,14 +22,6 @@ public class StatsPageController {
 		ModelAndView model = new ModelAndView();
 		model.addObject("seasons", gameService.getSeasons());
 		model.addObject("selectedSeason", season);
-		
-		/*if(statsNavigation.getDataScopeEnum() == DataScope.TEAMS) {
-			model.addObject("teamStandings", teamStatsService.getStandingsBySeasonAndType(season, statsNavigation.getRegulationScopeEnum()));
-		} else if(statsNavigation.getDataScopeEnum() == DataScope.PLAYERS) {
-			statsNavigation.setResCount(skaterStatsService.getCountBySeason(season, statsNavigation.getSeasonScopeEnum(), statsNavigation.getRegulationScopeEnum()));
-			model.addObject("skatersStats",skaterStatsService.getBySeasonAndNavigationDTO(season, statsNavigation));
-		}*/
-		
 		model.setViewName("pages/stats-page");
 		return model;
 	}

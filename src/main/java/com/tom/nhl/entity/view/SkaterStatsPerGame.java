@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Immutable;
 
 @Entity
@@ -37,6 +38,7 @@ public class SkaterStatsPerGame {
 	private int blockedShots;
 	private int faceoffs;
 	private int faceoffsWon;
+	private float faceoffsPercentage;
 	private int hits;
 	private int hitsTaken;
 	private int takeaway;
@@ -240,6 +242,14 @@ public class SkaterStatsPerGame {
 	}
 	public void setFaceoffsWon(int faceoffsWon) {
 		this.faceoffsWon = faceoffsWon;
+	}
+	
+	@Formula(value = "ROUND((faceoffsWon / faceoffs * 100), 1)")
+	public float getFaceoffsPercentage () {
+		return faceoffsPercentage;
+	}
+	public void setFaceoffsPercentage(float faceoffsPercentage) {
+		this.faceoffsPercentage = faceoffsPercentage;
 	}
 	
 	@Basic

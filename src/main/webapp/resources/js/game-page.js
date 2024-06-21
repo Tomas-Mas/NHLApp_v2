@@ -1,6 +1,9 @@
 var gameId = window.location.pathname.substr(window.location.pathname.lastIndexOf('/') + 1);
-const gameOverviewUrl = '/NHL/c/game/overview/' + gameId;
+
+/*const gameOverviewUrl = '/NHL/c/game/overview/' + gameId;
 const gameStatsUrl = '/NHL/c/game/stats/' + gameId;
+const playersStatsUrl = '/NHL/c/game/players/' + gameId;*/
+
 const gameMainSectionUrl = '/NHL/c/game/';
 const h2hUrl = '/NHL/c/game/h2h/' + gameId;
 const lastGamesUrl = '/NHL/c/game/lastGames/' + gameId;
@@ -29,13 +32,34 @@ document.onreadystatechange = function() {
 	}
 }
 
-function fetchMainSection() {
+function fetchMainSection(event) {
 	let period = '';
 	if(history.state != null && history.state.periodNum != undefined) {
 		period = history.state.periodNum;
 	}
 	
 	let url = gameMainSectionUrl + window.location.hash.substr(1) + '/' + gameId + '/' + period;
+	
+	let formData = document.getElementById('player-filter');
+	if(formData) {
+		let params = new URLSearchParams();
+		new FormData(formData).forEach((value, key) => {
+			params.append(key, value);
+		});
+		url += '?' + params;
+	}
+	
+	if(event && event.type === 'click') {
+		let clickedHeader = event.target;
+		let clickedHeaderTitle = clickedHeader.closest('th').title.split(' ').join('');
+		url += '&orderByColumn=' + clickedHeaderTitle;
+		
+		if(clickedHeader.textContent.includes(downArrStr)) {
+			url += '&isDescOrder=' + false;
+		} else {
+			url += '&isDescOrder=' + true;
+		}
+	}
 	
 	fetch(url)
 		.then(response => response.text())
@@ -151,8 +175,9 @@ function setMainSectionEvents() {
 					window.location.hash = 'overview';
 				} else if(element.textContent === 'Game Stats' && !element.classList.contains('selected')) {
 					window.location.hash = 'stats';
+				} else if(element.textContent === 'Players Stats' && !element.classList.contains('selected')) {
+					window.location.hash = 'players';
 				}
-				//fetchMainSection();
 			}
 		});
 	});
@@ -166,18 +191,27 @@ function setMainSectionEvents() {
 	});
 	
 	//stats only events(drawing lines and period submenu events)
-	if (window.location.hash === '#stats') {
+	if(window.location.hash === '#stats') {
 		let periodMenuList = document.querySelectorAll('#period-nav span');
 		for (let i = 0; i < periodMenuList.length; i++) {
 			let periodSpan = periodMenuList[i];
 			periodSpan.addEventListener('click', () => {
-				if (!periodSpan.classList.contains('selected')) {
+				if(!periodSpan.classList.contains('selected')) {
 					history.replaceState({ periodNum: i }, '');
 					fetchMainSection();
 				}
 			});
 		}
 		drawStatLines();
+	}
+	
+	//player stats events
+	if(window.location.hash === '#players') {
+		document.getElementById('player-filter').addEventListener('submit', (event) => {event.preventDefault;});
+		document.getElementById('player-filter').addEventListener('change', fetchMainSection);
+		document.querySelectorAll('#skater-stats th').forEach((header) => {
+			header.addEventListener('click', fetchMainSection);
+		});
 	}
 }
 

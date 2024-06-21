@@ -2,7 +2,7 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <%--
-	@modelObject - Map<String, List<GameBasicDataDTO> lastGamesMap - lastGames data for home and away team
+	@modelObject - Map<String, List<GameBasicDataDTO> lastGamesMap - lastGames map (keys = team abbreviation, value list of game data)
 --%>
 
 <form:form id="last-games-form" modelAttribute="lastGamesNavigation" method="GET">

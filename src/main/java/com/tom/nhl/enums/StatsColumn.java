@@ -1,6 +1,9 @@
 package com.tom.nhl.enums;
 
 public enum StatsColumn {
+	TEAM("Team"),
+	PLAYERNAME("PlayerName"),
+	PLAYERPOSITION("PlayerPosition"),
 	GAMESPLAYED("GamesPlayed"),
 	GOALS("Goals"),
 	ASSISTS("Assists"),
@@ -9,7 +12,10 @@ public enum StatsColumn {
 	PENALTYMINUTES("PenaltyMinutes"),
 	SHOTS("Shots"),
 	BLOCKEDSHOTS("BlockedShots"),
+	TIMEONICE("TimeOnIce"),
 	TIMEONICEAVG("TimeOnIceAvg"),
+	FACEOFFSOVERALL("FaceoffsOverall"),
+	FACEOFFSPERCENTAGE("FaceoffsPercentage"),
 	DEFAULT("None");
 	
 	private String description;
