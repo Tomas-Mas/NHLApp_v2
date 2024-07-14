@@ -6,11 +6,11 @@ public class GamePeriodKeyEventsDTO {
 
 	private int periodNumber;
 	private String periodScore;
-	private List<KeyEvent> events;
+	private List<GameEventDTO> events;
 	
 	public GamePeriodKeyEventsDTO() { }
 	
-	public GamePeriodKeyEventsDTO(int periodNumber, String periodScore, List<KeyEvent> events) {
+	public GamePeriodKeyEventsDTO(int periodNumber, String periodScore, List<GameEventDTO> events) {
 		this.periodNumber = periodNumber;
 		this.periodScore = periodScore;
 		this.events = events;
@@ -32,11 +32,11 @@ public class GamePeriodKeyEventsDTO {
 		this.periodScore = periodScore;
 	}
 	
-	public List<KeyEvent> getEvents() {
+	public List<GameEventDTO> getEvents() {
 		return events;
 	}
 	
-	public void setEvents(List<KeyEvent> events) {
+	public void setEvents(List<GameEventDTO> events) {
 		this.events = events;
 	}
 }

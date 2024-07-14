@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.tom.nhl.dto.GameEventDTO;
 import com.tom.nhl.dto.LastGamesNavigationDTO;
 import com.tom.nhl.dto.PlayerStatsFilterDTO;
 import com.tom.nhl.service.GameBasicDataService;
@@ -104,5 +108,21 @@ public class GameController {
 		
 		model.setViewName("components/game-players-stats");
 		return model;
+	}
+	
+	@RequestMapping(value = {"/simulation/{gameId}", "/simulation/{gameId}/{eventNum}"}, method = RequestMethod.GET)
+	public ModelAndView getSimulation(@PathVariable int gameId, @PathVariable(name = "eventNum", required = false) Optional<Integer> eventNum) {
+		ModelAndView model = new ModelAndView();
+		
+		model.addObject("pageNavigation", "Simulation");
+		model.addObject("eventsBasicData", gameEventService.getEventsBasicDataByGame(gameId));
+		
+		model.setViewName("components/game-simulation");
+		return model;
+	}
+	
+	@RequestMapping(value = "/fullEvents/{gameId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<GameEventDTO>> getFullEvents(@PathVariable int gameId) {
+		return new ResponseEntity<List<GameEventDTO>>(gameEventService.getFullEventsDataByGame(gameId), HttpStatus.OK);
 	}
 }

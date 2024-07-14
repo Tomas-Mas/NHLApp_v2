@@ -14,6 +14,7 @@
 	<link rel="stylesheet" type="text/css" href="/NHL/src/css/components/game-stats.css">
 	<link rel="stylesheet" type="text/css" href="/NHL/src/css/components/game-last-games.css">
 	<link rel="stylesheet" type="text/css" href="/NHL/src/css/components/game-players-stats.css">
+	<link rel="stylesheet" type="text/css" href="/NHL/src/css/components/game-simulation.css">
 	
 	<link rel="stylesheet" type="text/css" href="/NHL/src/css/sub_components/game-submenu.css">
 	<link rel="stylesheet" type="text/css" href="/NHL/src/css/sub_components/game-header.css">
